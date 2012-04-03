@@ -22,7 +22,6 @@ public class GPSInfoScreen  extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_info);
 		
-		
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
