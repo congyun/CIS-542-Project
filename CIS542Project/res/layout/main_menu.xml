@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:weightSum="1">
+	
+	<TextView
+		android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_margin="10dp"
+		android:text="Welcome!" />
+	
+	<Button android:id="@+id/GPSInfoButton" 
+		android:text="GPS Information"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:onClick="onGPSInfoButtonClick" />
+	
+	<Button android:id="@+id/historyButton" 
+		android:text="Travel History"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:onClick="onHistoryButtonClick" />	
+
+	<Button android:id="@+id/settingButton" 
+		android:text="Settings"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:onClick="onSettingButtonClick" />	
+
+	<Button android:id="@+id/helpButton" 
+		android:text="Help"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:onClick="onHelpButtonClick" />	
+
+	<Button android:id="@+id/logoutButton" 
+		android:text="Sign Out"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:onClick="onLogoutButtonClick" />
+	
+</LinearLayout>

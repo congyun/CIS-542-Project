@@ -9,15 +9,10 @@ public class SettingScreen  extends Activity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.home);
+		setContentView(R.layout.setting);
 	}
 
 	public void onBackToMainButtonClick(View view){
-		
-	}
-	
-	
-	public void onLogoutButtonClick(View view){
-		
+		finish();
 	}
 }

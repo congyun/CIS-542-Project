@@ -1,26 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="match_parent"
-	android:layout_height="match_parent" android:weightSum="1">
-	<TextView android:id="@+id/textView2" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_marginTop="5dp"
-		android:layout_marginLeft="10dp" android:text="Login:" />
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:weightSum="1">
+	
+	<TextView
+	    android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:layout_marginLeft="10dp"
+		android:text="Login:" />
 
-	<EditText android:id="@+id/login" android:layout_width="fill_parent"
-		android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
-		android:layout_height="40dp" android:typeface="sans"
+	<EditText android:id="@+id/username"
+	    android:inputType="text"
+	    android:layout_width="fill_parent"
+	    android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:typeface="sans"
 		android:textStyle="normal">
 		<requestFocus />
 	</EditText>
-	<TextView android:id="@+id/textView3" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Password:"
-		android:layout_marginLeft="10dp" />
-	<EditText android:layout_width="match_parent"
-		android:inputType="textPassword" android:layout_marginBottom="10dp"
-		android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
-		android:id="@+id/password" android:layout_height="40dp"
-		android:typeface="sans" android:textStyle="normal" />
-	<Button android:layout_width="match_parent" android:id="@+id/loginbutton"
-		android:text="Sign In" android:layout_marginLeft="10dp"
-		android:layout_marginRight="10dp" android:layout_height="40dp" />
+	
+	<TextView
+	    android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="10dp"
+		android:text="Password:" />
+	
+	<EditText android:id="@+id/password"
+	    android:inputType="textPassword"
+	    android:layout_width="match_parent"
+	    android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:layout_marginBottom="10dp"
+		android:typeface="sans"
+		android:textStyle="normal" />
+	
+	<Button android:id="@+id/loginButton"
+	    android:layout_width="match_parent"
+	    android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:text="Sign In"
+		android:onClick="onLoginButtonClick" />
+	
+	<Button android:id="@+id/quitButton"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:text="Quit"
+		android:onClick="onQuitButtonClick" />
 </LinearLayout>
