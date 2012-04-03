@@ -87,23 +87,7 @@ public class GPSInfoScreen  extends Activity{
         public void run() {
             try {
                 Log.d("ReadThread", "Connecting.");
-/*            	Socket socket = new Socket("158.130.103.42", 19107);
-            	PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out.println("Msg from Android.\0");
 
-        		String messageFromCProgram;
-
-        		while ((messageFromCProgram = in.readLine()) != null) {
-        			Log.v("GPSInfoScreen","messageFromCProgram:  " + messageFromCProgram);
-    				TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
-    				destinationPositionTextView.setText(messageFromCProgram);
-        		}
-
-        		out.close();
-        		in.close();
-        		socket.close();
-*/
                 DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
                 c.readData();
                 TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
@@ -120,8 +104,10 @@ public class GPSInfoScreen  extends Activity{
         public void run() {
             try {
                 Log.d("SendThread", "Connecting.");
+                
                 DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
                 c.sendMessage("Msg from Android app.\0");
+                
                 Log.d("SendThread", "Closed.");
             } catch (Exception e) {
                 Log.e("SendThread", "Error", e);
