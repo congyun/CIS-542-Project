@@ -22,22 +22,21 @@ public class GPSInfoScreen  extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_info);
 		
-		
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		// Get the “current” location
+		// Get the current location
 		String provider = LocationManager.GPS_PROVIDER;
 		Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 		if (lastKnownLocation != null)
 		{
-			Log.d("lastKnownLocation", "OK");
+			Log.d("onCreate", "lastKnownLocation is OK");
 			double longitude = lastKnownLocation.getLongitude();
 			double latitude = lastKnownLocation.getLatitude();
 			TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
 			currentPositionTextView.setText("You are at " + Double.toString(longitude) + ", " +Double.toString(latitude));
 		} else {
-			Log.e("lastKnownLocation", "NULL");
+			Log.e("onCreate", "lastKnownLocation is NULL");
 		}
 		
 		
@@ -47,18 +46,24 @@ public class GPSInfoScreen  extends Activity{
 
 			// Called when a new location is found by the location provider.
 			public void onLocationChanged(Location location) {
-			      // do whatever with the Location object
+				Log.d("onCreate", "locationListener.onLocationChanged");
 				double longitude = location.getLongitude();
 				double latitude = location.getLatitude();
 				TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
 				currentPositionTextView.setText("You are at " + Double.toString(longitude) + ", " +Double.toString(latitude));
 			}
 	
-			public void onStatusChanged(String provider, int status, Bundle extras) {}
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+				Log.d("onCreate", "locationListener.onStatusChanged");
+			}
 	
-			public void onProviderEnabled(String provider) {}
+			public void onProviderEnabled(String provider) {
+				Log.d("onCreate", "locationListener.onProviderEnabled");
+			}
 	
-			public void onProviderDisabled(String provider) {}
+			public void onProviderDisabled(String provider) {
+				Log.d("onCreate", "locationListener.onProviderDisabled");
+			}
 		};
 
 		// Register listener with Location Manager to receive updates
@@ -79,7 +84,7 @@ public class GPSInfoScreen  extends Activity{
 
         public void run() {
             try {
-                Log.d("ClientActivity", "C: Connecting...");
+                Log.d("ClientThread", "Connecting.");
             	Socket socket = new Socket("158.130.103.42", 19107);
             	PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             	BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -97,9 +102,9 @@ public class GPSInfoScreen  extends Activity{
         		out.close();
         		in.close();
         		socket.close();
-                Log.d("ClientActivity", "C: Closed.");
+                Log.d("ClientThread", "Closed.");
             } catch (Exception e) {
-                Log.e("ClientActivity", "C: Error", e);
+                Log.e("ClientThread", "Error", e);
             }
         }
     }
