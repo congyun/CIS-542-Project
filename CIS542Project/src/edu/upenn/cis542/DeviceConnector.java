@@ -27,8 +27,7 @@ public class DeviceConnector {
         try {
         	socket = new Socket(serverAddr, serverPort);
        		out = new PrintWriter(socket.getOutputStream(), true);
-            	in = new BufferedReader(new InputStreamReader(
-            		socket.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
         	Log.e("readData", "Don't know about host");
         } catch (IOException e) {
@@ -36,9 +35,16 @@ public class DeviceConnector {
         }
 
 		out.println("GPSDATA\0");
-		String temp = in.readLine();
-		Log.d("readData", "temp:"+temp);
-		parseData(temp);
+		String msg = in.readLine();
+		Log.d("readData", "msg:" + msg);
+		if (msg != null) {
+			parseData(msg);
+		} else {
+			this.isPositiveLat = true;
+			this.latitude = 0;
+			this.isPositiveLong = true;
+			this.longitude = 0;
+		}
 	
 		out.close();
 		in.close();
@@ -60,10 +66,8 @@ public class DeviceConnector {
     	else
     		this.isPositiveLong = false;
     	String lat = input.substring(1, sepIndex);
-    	Log.d("parseData","lat:"+lat);
     	this.latitude = Long.valueOf(lat);
     	String longi = input.substring(sepIndex + 2);
-    	Log.d("parseData","longi:"+longi);
     	this.longitude = Long.valueOf(longi);
     }
 
@@ -75,8 +79,7 @@ public class DeviceConnector {
         try {
         	socket = new Socket(serverAddr, serverPort);
        		out = new PrintWriter(socket.getOutputStream(), true);
-            	in = new BufferedReader(new InputStreamReader(
-            		socket.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
         	Log.e("sendData", "Don't know about host");
         } catch (IOException e) {

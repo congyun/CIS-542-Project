@@ -88,10 +88,11 @@ public class GPSInfoScreen  extends Activity{
             try {
                 Log.d("ReadThread", "Connecting.");
 
-                DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
+                DeviceConnector c = new DeviceConnector("158.130.103.42", 19108);
                 c.readData();
-                TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
-				currentPositionTextView.setText("Your destination is " + Long.toString(c.longitude) + ", " + Long.toString(c.latitude));
+                TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+                String msg = "Your destination is " + (c.isPositiveLong ? "" : "-") + Long.toString(c.longitude) + ", " + (c.isPositiveLat ? "" : "-") + Long.toString(c.latitude);
+                destinationPositionTextView.setText(msg);
                 
                 Log.d("ReadThread", "Closed.");
             } catch (Exception e) {
@@ -105,7 +106,7 @@ public class GPSInfoScreen  extends Activity{
             try {
                 Log.d("SendThread", "Connecting.");
                 
-                DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
+                DeviceConnector c = new DeviceConnector("158.130.103.42", 19108);
                 c.sendMessage("Msg from Android app.\0");
                 
                 Log.d("SendThread", "Closed.");
