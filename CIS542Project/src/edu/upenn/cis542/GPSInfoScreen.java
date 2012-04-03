@@ -74,21 +74,22 @@ public class GPSInfoScreen  extends Activity{
 						locationListener);
 
 		
-		// Get Remote String
-		Thread cThread = new Thread(new ClientThread());
-		cThread.start();
-
+		// Get Message from Device
+		Thread rThread = new Thread(new ReadThread());
+		rThread.start();
+		
+		// Send Message to Device
+		Thread sThread = new Thread(new SendThread());
+		sThread.start();
 	}	
 	
-    public class ClientThread implements Runnable {
-
+    public class ReadThread implements Runnable {
         public void run() {
             try {
-                Log.d("ClientThread", "Connecting.");
-            	Socket socket = new Socket("158.130.103.42", 19107);
+                Log.d("ReadThread", "Connecting.");
+/*            	Socket socket = new Socket("158.130.103.42", 19107);
             	PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            	BufferedReader in = new BufferedReader(new InputStreamReader(
-                		socket.getInputStream()));
+            	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out.println("Msg from Android.\0");
 
         		String messageFromCProgram;
@@ -102,13 +103,32 @@ public class GPSInfoScreen  extends Activity{
         		out.close();
         		in.close();
         		socket.close();
-                Log.d("ClientThread", "Closed.");
+*/
+                DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
+                c.readData();
+                TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
+				currentPositionTextView.setText("Your destination is " + Long.toString(c.longitude) + ", " + Long.toString(c.latitude));
+                
+                Log.d("ReadThread", "Closed.");
             } catch (Exception e) {
-                Log.e("ClientThread", "Error", e);
+                Log.e("ReadThread", "Error", e);
             }
         }
     }
-	
+
+    public class SendThread implements Runnable {
+        public void run() {
+            try {
+                Log.d("SendThread", "Connecting.");
+                DeviceConnector c = new DeviceConnector("158.130.103.42", 19107);
+                c.sendMessage("Msg from Android app.\0");
+                Log.d("SendThread", "Closed.");
+            } catch (Exception e) {
+                Log.e("SendThread", "Error", e);
+            }
+        }
+    }
+    
 	public void onBackToMainButtonClick(View view){
 		finish();
 	}
