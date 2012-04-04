@@ -26,12 +26,9 @@ public class DeviceConnector {
      * Unit: degree
      */
     public double getLatitude() {
-    	int itgr = (int) (this.latitude / 1000000);
-    	double frac = ((this.latitude - itgr * 1000000) / 10000.0) / 60.0;
-    	double res = (double)itgr + frac;
-    	if (!this.isPositiveLat)
-    		res *= -1;
-    	return res;
+    	int itgr = this.latitude / 1000000;
+    	double frac = (this.latitude / 10000.0) / 60.0;
+    	return (double)itgr + frac;
     }
     
     /**
@@ -39,12 +36,9 @@ public class DeviceConnector {
      * Unit: degree
      */
     public double getLongitude() {
-    	int itgr = (int) (this.longitude / 1000000);
-    	double frac = ((this.longitude - itgr * 1000000) / 10000.0) / 60.0;
-    	double res = (double)itgr + frac;
-    	if (!this.isPositiveLong)
-    		res *= -1;
-    	return res;
+    	int itgr = this.longitude / 1000000;
+    	double frac = (this.longitude / 10000.0) / 60.0;
+    	return (double)itgr + frac;
     }
 
     public void readData() throws IOException {
