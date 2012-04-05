@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.TextView;
  
 public class GPSInfoScreen  extends Activity{
+	public static final String SERVER_IP = "158.130.103.42";
+	public static final int SERVER_PORT = 19108;
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,10 +91,11 @@ public class GPSInfoScreen  extends Activity{
             try {
                 Log.d("ReadThread", "Connecting.");
 
-                DeviceConnector c = new DeviceConnector("158.130.103.42", 19108);
+                DeviceConnector c = new DeviceConnector(SERVER_IP, SERVER_PORT);
                 c.readData();
                 TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
-                String msg = "Your destination is " + (c.isPositiveLong ? "" : "-") + Long.toString(c.longitude) + ", " + (c.isPositiveLat ? "" : "-") + Long.toString(c.latitude);
+                //String msg = "Your destination is " + (c.isPositiveLong ? "" : "-") + Long.toString(c.longitude) + ", " + (c.isPositiveLat ? "" : "-") + Long.toString(c.latitude);
+                String msg = "Your destination is " + Double.toString(c.getLongitude()) + ", " + Double.toString(c.getLatitude());
                 destinationPositionTextView.setText(msg);
                 
                 Log.d("ReadThread", "Closed.");
@@ -106,7 +110,7 @@ public class GPSInfoScreen  extends Activity{
             try {
                 Log.d("SendThread", "Connecting.");
                 
-                DeviceConnector c = new DeviceConnector("158.130.103.42", 19108);
+                DeviceConnector c = new DeviceConnector(SERVER_IP, SERVER_PORT);
                 c.sendMessage("Msg from Android app.\0");
                 
                 Log.d("SendThread", "Closed.");
