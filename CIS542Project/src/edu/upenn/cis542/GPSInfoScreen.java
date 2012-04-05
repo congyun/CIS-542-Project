@@ -14,7 +14,7 @@ public class GPSInfoScreen  extends Activity{
 	public static final String SERVER_IP = "158.130.103.42";
 	public static final int SERVER_PORT = 19108;
 	
-	String msgFromServer = "";
+	String msgFromServer = "Your destination is 0, 0";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
