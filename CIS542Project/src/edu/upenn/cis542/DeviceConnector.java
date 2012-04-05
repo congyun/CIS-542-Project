@@ -65,6 +65,11 @@ public class DeviceConnector {
 		out.println("GPSDATA\0");
 		String msg = in.readLine();
 		Log.d("readData", "msg:" + msg);
+		
+		//for testing
+		//msg = "+39571276 -75114442";
+		//Log.d("readData", "changed msg to:" + msg);
+		
 		if (msg != null) {
 			parseData(msg);
 		} else {

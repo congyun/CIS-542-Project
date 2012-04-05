@@ -1,10 +1,5 @@
 package edu.upenn.cis542;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -19,6 +14,7 @@ public class GPSInfoScreen  extends Activity{
 	public static final String SERVER_IP = "158.130.103.42";
 	public static final int SERVER_PORT = 19108;
 	
+	String msgFromServer = "";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +76,15 @@ public class GPSInfoScreen  extends Activity{
 		// Get Message from Device
 		Thread rThread = new Thread(new ReadThread());
 		rThread.start();
+		try {
+			rThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+		destinationPositionTextView.setText(msgFromServer);
 		
 		// Send Message to Device
 		Thread sThread = new Thread(new SendThread());
@@ -93,10 +98,9 @@ public class GPSInfoScreen  extends Activity{
 
                 DeviceConnector c = new DeviceConnector(SERVER_IP, SERVER_PORT);
                 c.readData();
-                TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
-                //String msg = "Your destination is " + (c.isPositiveLong ? "" : "-") + Long.toString(c.longitude) + ", " + (c.isPositiveLat ? "" : "-") + Long.toString(c.latitude);
-                String msg = "Your destination is " + Double.toString(c.getLongitude()) + ", " + Double.toString(c.getLatitude());
-                destinationPositionTextView.setText(msg);
+                msgFromServer = "Your destination is " + Double.toString(c.getLongitude()) + ", " + Double.toString(c.getLatitude());
+                //TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+                //destinationPositionTextView.setText(msgFromServer);
                 
                 Log.d("ReadThread", "Closed.");
             } catch (Exception e) {
@@ -111,7 +115,7 @@ public class GPSInfoScreen  extends Activity{
                 Log.d("SendThread", "Connecting.");
                 
                 DeviceConnector c = new DeviceConnector(SERVER_IP, SERVER_PORT);
-                c.sendMessage("Msg from Android app.\0");
+                c.sendMessage("Msg from app.");
                 
                 Log.d("SendThread", "Closed.");
             } catch (Exception e) {
