@@ -33,7 +33,7 @@ public class SearchPlaces {
 	public SearchPlaces(){
 		
 		sensor = false;
-		radius = 50;
+		radius = 1000;
 		m_placeslist = new PlacesList();
 				
 	}
@@ -108,7 +108,7 @@ public class SearchPlaces {
      urlString.append(Double.toString(Lat));
      urlString.append(",");
      urlString.append(Double.toString(Lon));
-     urlString.append("&type=");
+     urlString.append("&types=");
      urlString.append(type);
      urlString.append("&sensor=");
      urlString.append(Boolean.toString(sensor));

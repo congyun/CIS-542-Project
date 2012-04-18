@@ -72,7 +72,7 @@ public class MapRouteScreen extends MapActivity {
                 }
                 Log.d("MapRoute, i_type", i_type);
                 
-                new Thread() {
+                Thread rThread = new Thread() {
                         @Override
                         public void run() {
                                 
@@ -81,7 +81,14 @@ public class MapRouteScreen extends MapActivity {
                                 mRoad = RoadProvider.getRoute(is);
                                 mHandler.sendEmptyMessage(0);
                         }
-                }.start();
+                };
+                rThread.start();
+                try {
+                    rThread.join();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 
                 SearchPlaces search = new SearchPlaces();
                 mList = search.getNearByPlaces(fromLat, fromLon, i_type);
@@ -94,14 +101,13 @@ public class MapRouteScreen extends MapActivity {
 /*        		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
                 sThread.start();
-*/
-        }
+*/        }
 
         // this handle change the description and mapview widgets
         Handler mHandler = new Handler() {
                 public void handleMessage(android.os.Message msg) {
                         TextView textView = (TextView) findViewById(R.id.description);
-                        textView.setText(mRoad.mName + " " + mRoad.mDescription);
+                        textView.setText(mRoad.mName + ", " + mRoad.mDescription);
                         MapOverlay mapOverlay = new MapOverlay(mRoad, mList,mapView, s_marker,d_marker, i_marker, fromLat, fromLon, toLat,toLon);
                         List<Overlay> listOfOverlays = mapView.getOverlays();
                         listOfOverlays.clear();
@@ -125,7 +131,7 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("SendThread", "Connecting.");
                     
                     DeviceConnector c = new DeviceConnector();
-                    c.sendMessage("Msg from app.");
+                    c.sendMessage(mRoad.mDescription);
                     
                     Log.d("SendThread", "Closed.");
                 } catch (Exception e) {

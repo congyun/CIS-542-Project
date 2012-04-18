@@ -6,7 +6,7 @@ import java.net.*;
 import android.util.Log;
 
 public class DeviceConnector {
-    private String serverAddr = "158.130.103.42";
+    private String serverAddr = "158.130.102.127";
     private int serverPort = 19108;
     public long latitude = 0;
     public long longitude = 0;
