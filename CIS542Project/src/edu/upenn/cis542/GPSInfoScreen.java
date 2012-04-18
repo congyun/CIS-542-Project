@@ -120,8 +120,7 @@ public class GPSInfoScreen  extends Activity {
 						0, // distance interval
 						locationListener);
 
-/*		
-		// Get Message and destination GPX coordinates from Device
+/*		// Get Message and destination GPX coordinates from Device
 		Thread rThread = new Thread(new ReadThread());
 		rThread.start();
 		try {
@@ -130,7 +129,11 @@ public class GPSInfoScreen  extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-*/		
+*/
+		
+		//toLat = 39.952759;
+	    //toLon = -75.192776;
+	    
 		TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
 		String msgFromServer = "Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat);
 		destinationPositionTextView.setText(msgFromServer);
