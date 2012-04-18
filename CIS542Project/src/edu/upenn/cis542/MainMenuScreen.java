@@ -1,5 +1,6 @@
 package edu.upenn.cis542;
 
+import edu.upenn.cis542.route.Road;
 import edu.upenn.cis542.utilities.AppConstants;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
  
 public class MainMenuScreen  extends Activity{
-	
+    Road pastRoad = new Road();
+    
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,6 +96,11 @@ public class MainMenuScreen  extends Activity{
 		SharedPreferences.Editor editor = settings.edit();
 		editor.remove("logged");
 		editor.commit();
-		finish();		
+		
+		// Yufei: 
+		// store a pastRoad object into database
+		
+		
+		finish();
 	}
 }

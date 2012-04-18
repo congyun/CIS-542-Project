@@ -80,20 +80,20 @@ public class GPSInfoScreen  extends Activity {
 		Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 		if (lastKnownLocation != null)
 		{
-			Log.d("onCreate", "lastKnownLocation is OK");
+			Log.d("GPSInfo, onCreate", "lastKnownLocation is OK");
 			fromLon = lastKnownLocation.getLongitude();
 			fromLat = lastKnownLocation.getLatitude();
 			TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
 			currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
 		} else {
-			Log.e("onCreate", "lastKnownLocation is NULL");
+			Log.e("GPSInfo, onCreate", "lastKnownLocation is NULL");
 		}
 		
 		// Define a listener that responds to location updates
 		LocationListener locationListener = new LocationListener() {
 			// Called when a new location is found by the location provider.
 			public void onLocationChanged(Location location) {
-				Log.d("onCreate", "locationListener.onLocationChanged");
+				Log.d("GPSInfo, onCreate", "locationListener.onLocationChanged");
 				fromLon = location.getLongitude();
 				fromLat = location.getLatitude();
 				TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
@@ -101,15 +101,15 @@ public class GPSInfoScreen  extends Activity {
 			}
 	
 			public void onStatusChanged(String provider, int status, Bundle extras) {
-				Log.d("onCreate", "locationListener.onStatusChanged");
+				Log.d("GPSInfo, onCreate", "locationListener.onStatusChanged");
 			}
 	
 			public void onProviderEnabled(String provider) {
-				Log.d("onCreate", "locationListener.onProviderEnabled");
+				Log.d("GPSInfo, onCreate", "locationListener.onProviderEnabled");
 			}
 	
 			public void onProviderDisabled(String provider) {
-				Log.d("onCreate", "locationListener.onProviderDisabled");
+				Log.d("GPSInfo, onCreate", "locationListener.onProviderDisabled");
 			}
 		};
 

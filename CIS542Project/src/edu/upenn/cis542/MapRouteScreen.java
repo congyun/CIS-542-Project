@@ -4,11 +4,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -28,18 +32,19 @@ import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class MapRouteScreen extends MapActivity {
 
-        LinearLayout linearLayout;
-        MapView mapView;
+        private LinearLayout linearLayout;
+        private MapView mapView;
         private Road mRoad;
         private PlacesList mList;
-        Drawable s_marker;
-        Drawable d_marker;
-        Drawable i_marker;
+        private Drawable s_marker;
+        private Drawable d_marker;
+        private Drawable i_marker;
         
         /*Params that need to be passed from main program*/
-        double fromLat, fromLon, toLat, toLon;
-        RoadProvider.Mode mode;
+        private double fromLat, fromLon, toLat, toLon;
+        private RoadProvider.Mode mode;
         private String i_type;
+        private Road pastRoad = new Road(); // at least the current position
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,9 @@ public class MapRouteScreen extends MapActivity {
                 toLon = getIntent().getDoubleExtra("toLon", 0.0);
                 toLat = getIntent().getDoubleExtra("toLat", 0.0);
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
-                i_type = getIntent().getStringExtra("i_type");               
+                i_type = getIntent().getStringExtra("i_type");
+                
+                
                 Log.d("MapRoute, fromLon", Double.toString(fromLon));
                 Log.d("MapRoute, fromLat", Double.toString(fromLat));
                 Log.d("MapRoute, toLon", Double.toString(toLon));
@@ -71,6 +78,7 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, mode", "DRIVING");
                 }
                 Log.d("MapRoute, i_type", i_type);
+                
                 
                 Thread rThread = new Thread() {
                         @Override
@@ -101,7 +109,38 @@ public class MapRouteScreen extends MapActivity {
 /*        		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
                 sThread.start();
-*/        }
+*/        
+        		
+        		// Get LocationManager
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+               
+                // Define a listener that responds to location updates
+                LocationListener locationListener = new LocationListener() {
+                    // Called when a new location is found by the location provider.
+                    public void onLocationChanged(Location location) {
+                        Log.d("MapRoute, onCreate", "locationListener.onLocationChanged");
+                    }
+            
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                        Log.d("MapRoute, onCreate", "locationListener.onStatusChanged");
+                    }
+            
+                    public void onProviderEnabled(String provider) {
+                        Log.d("MapRoute, onCreate", "locationListener.onProviderEnabled");
+                    }
+            
+                    public void onProviderDisabled(String provider) {
+                        Log.d("MapRoute, onCreate", "locationListener.onProviderDisabled");
+                    }
+                };
+
+                // Register listener with Location Manager to receive updates
+                locationManager.requestLocationUpdates(
+                             LocationManager.GPS_PROVIDER, 
+                                1000, // time interval
+                                0, // distance interval
+                                locationListener);        
+        }
 
         // this handle change the description and mapview widgets
         Handler mHandler = new Handler() {
@@ -121,7 +160,13 @@ public class MapRouteScreen extends MapActivity {
                 return false;
         }
         
+        
+        // destinationChange(double toLat, double toLon)
+        
         public void onBackToMainButtonClick(View view) {
+            // pastRoad updated -> pass back to GPSInfo
+            
+            
             finish();
         }
         
@@ -258,7 +303,7 @@ class MapOverlay extends com.google.android.maps.Overlay {
 				GeoPoint dp = new GeoPoint((int) (mList.results.get(i).latitude *1E6), (int)(mList.results.get(i).longtitude *1E6));
 				if(dp.equals(p))
 				{
-					System.out.println("hit!");
+					Log.v("onTap", "hit!");
 					i_name = mList.results.get(i).name;
 					i_vicinity = mList.results.get(i).vicinity;
 					i_rating = mList.results.get(i).rating;

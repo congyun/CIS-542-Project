@@ -10,6 +10,10 @@ public class HistoryScreen  extends Activity{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history);
+		
+		//Yufei:
+		// get pastRoads records from database, pass to Road objects
+		
 	}
 
 	public void onBackToMainButtonClick(View view){
