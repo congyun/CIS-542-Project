@@ -3,6 +3,7 @@ package edu.upenn.cis542;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import edu.upenn.cis542.route.*;
+import edu.upenn.cis542.utilities.AppConstants;
 import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class GPSInfoScreen  extends Activity {
@@ -33,24 +35,42 @@ public class GPSInfoScreen  extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_info);
 		
-		// initialize travelModeSpinner
-		Spinner spinner = (Spinner) findViewById(R.id.travelModeSpinner);
-	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-	            this, R.array.travel_mode_array, android.R.layout.simple_spinner_item);
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    spinner.setAdapter(adapter);
-	    spinner.setOnItemSelectedListener(new travelModeSpinnerOnItemSelectedListener());
-	    spinner.setSelection(1);
-	    
+		// get SharedPreferences
+		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 		
+		// initialize travelModeSpinner
+		Spinner travelSpinner = (Spinner) findViewById(R.id.travelModeSpinner);
+	    ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(
+	            this, R.array.travel_mode_array, android.R.layout.simple_spinner_item);
+	    travelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    travelSpinner.setAdapter(travelAdapter);
+	    travelSpinner.setOnItemSelectedListener(new travelModeSpinnerOnItemSelectedListener());
+	    String defaultTravelValue = settings.getString(AppConstants.DEFAULT_TRAVEL_MODE_KEY, "");
+	    Log.d("GPSInfo, defaultTravelValue", defaultTravelValue); 
+        if (defaultTravelValue.equals("Walking")) {
+            travelSpinner.setSelection(0);
+        } else if (defaultTravelValue.equals("Bicycling")) {
+            travelSpinner.setSelection(1);
+        } else if (defaultTravelValue.equals("Driving")) {
+            travelSpinner.setSelection(2);
+        }
+        
 	    // initialize interestTypeSpinner
-	    Spinner spinner2 = (Spinner) findViewById(R.id.interestTypeSpinner);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+	    Spinner interestSpinner = (Spinner) findViewById(R.id.interestTypeSpinner);
+        ArrayAdapter<CharSequence> interestAdapter = ArrayAdapter.createFromResource(
                 this, R.array.interest_type_array, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(adapter2);
-        spinner2.setOnItemSelectedListener(new interestTypeSpinnerOnItemSelectedListener());
-        spinner2.setSelection(1);
+        interestAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        interestSpinner.setAdapter(interestAdapter);
+        interestSpinner.setOnItemSelectedListener(new interestTypeSpinnerOnItemSelectedListener());
+        String defaultInterestValue = settings.getString(AppConstants.DEFAULT_INTEREST_TYPE_KEY, "");
+        Log.d("GPSInfo, defaultInterestValue", defaultInterestValue); 
+        if (defaultInterestValue.equals("Food")) {
+            interestSpinner.setSelection(0);
+        } else if (defaultInterestValue.equals("Shopping Mall")) {
+            interestSpinner.setSelection(1);
+        } else if (defaultInterestValue.equals("Subway Station")) {
+            interestSpinner.setSelection(2);
+        } 
         
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -116,23 +136,6 @@ public class GPSInfoScreen  extends Activity {
 		destinationPositionTextView.setText(msgFromServer);
 	}	
 	
-    
-    public void onMapRouteButtonClick(View view) {
-        Intent intent = new Intent(this, MapRouteScreen.class);
-        intent.putExtra("fromLon", fromLon);
-        intent.putExtra("fromLat", fromLat);
-        intent.putExtra("toLon", toLon);
-        intent.putExtra("toLat", toLat);
-        intent.putExtra("mode", mode);
-        intent.putExtra("i_mode", i_type);
-        startActivity(intent);
-    }
-    
-	public void onBackToMainButtonClick(View view) {
-		finish();
-	}
-	
-	
     public class ReadThread implements Runnable {
         public void run() {
             try {
@@ -159,7 +162,7 @@ public class GPSInfoScreen  extends Activity {
             } else if (selectedItem.equals("Driving")) {
                 mode = RoadProvider.Mode.DRIVING;
             }
-            Log.d("travelModeSpinner", selectedItem);
+            Log.d("GPSInfo, travelModeSpinner", selectedItem);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
@@ -172,14 +175,31 @@ public class GPSInfoScreen  extends Activity {
             String selectedItem = parent.getItemAtPosition(pos).toString();
             if (selectedItem.equals("Food")) {
                 i_type = "food";
-            } else if (selectedItem.equals("Shopping")) {
-                i_type = "shopping";
+            } else if (selectedItem.equals("Shopping Mall")) {
+                i_type = "shopping_mall";
+            } else if (selectedItem.equals("Subway Station")) {
+                i_type = "subway_station";
             }
-            Log.d("interestTypeSpinner", selectedItem);
+            Log.d("GPSInfo, interestTypeSpinner", selectedItem);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
           // Do nothing.
         }
+    }
+    
+    public void onMapRouteButtonClick(View view) {
+        Intent intent = new Intent(this, MapRouteScreen.class);
+        intent.putExtra("fromLon", fromLon);
+        intent.putExtra("fromLat", fromLat);
+        intent.putExtra("toLon", toLon);
+        intent.putExtra("toLat", toLat);
+        intent.putExtra("mode", mode);
+        intent.putExtra("i_type", i_type);
+        startActivity(intent);
+    }
+    
+    public void onBackToMainButtonClick(View view) {
+        finish();
     }
 }

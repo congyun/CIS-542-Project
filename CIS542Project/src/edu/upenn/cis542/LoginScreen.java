@@ -1,5 +1,6 @@
 package edu.upenn.cis542;
 
+import edu.upenn.cis542.utilities.AppConstants;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,8 +15,7 @@ import android.widget.EditText;
  *
  */
 public class LoginScreen extends Activity {
-	public static final String PREFS_NAME = "LoginPrefs";
-	
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class LoginScreen extends Activity {
          * Check if we successfully logged in before. 
          * If we did, redirect to home page
          */
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 		if (settings.getString("logged", "").toString().equals("logged")) {
 			Intent intent = new Intent(this, MainMenuScreen.class);
 			startActivity(intent);
@@ -44,7 +44,7 @@ public class LoginScreen extends Activity {
 				 * we will save the Preference data
 				 * and redirect to next class / home  
 				 */
-				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+				SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 				SharedPreferences.Editor editor = settings.edit();
 				editor.putString("logged", "logged");
 				editor.commit();

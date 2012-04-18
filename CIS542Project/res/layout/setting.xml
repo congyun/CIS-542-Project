@@ -5,13 +5,62 @@
 	android:layout_height="match_parent"
 	android:weightSum="1">
     
-	<TextView
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="10dp"
-		android:text="This is Setting Screen" />
 
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:text="Default Travel Mode" />
+    
+    <Spinner 
+        android:id="@+id/travelModeSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom = "5dp"
+        android:prompt="@string/travel_mode_prompt"
+    />
+    
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="Default Points of Interests Type" />
+    
+    <Spinner 
+        android:id="@+id/interestTypeSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom = "5dp"
+        android:prompt="@string/interest_type_prompt"
+    />
+    
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="Alert Distance" />
+    
+    <Spinner 
+        android:id="@+id/alertDistanceSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom = "10dp"
+        android:prompt="@string/alert_distance_prompt"
+    />
+    
 	<Button
 	    android:layout_width="match_parent"
 	    android:layout_height="40dp"
