@@ -1,4 +1,4 @@
-package edu.upenn.cis542;
+package edu.upenn.cis542.utilities;
 
 import java.io.*;
 import java.net.*;
@@ -6,21 +6,14 @@ import java.net.*;
 import android.util.Log;
 
 public class DeviceConnector {
-    
-    private String serverAddr;
-    private int serverPort;
+    private String serverAddr = "158.130.103.42";
+    private int serverPort = 19108;
     public long latitude = 0;
     public long longitude = 0;
     public boolean isPositiveLat = true;
     public boolean isPositiveLong = true;
     
-    
 
-    DeviceConnector(String addr, int port) {
-    	this.serverAddr = addr;
-        this.serverPort = port;
-    }
-    
     /**
      * Calculate the latitude according to the arduino code.
      * Unit: degree

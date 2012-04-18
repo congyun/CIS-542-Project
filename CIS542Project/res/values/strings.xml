@@ -3,4 +3,17 @@
 
     <string name="app_name">CIS542Project</string>
 
+    <string name="travel_mode_prompt">Choose a travel mode</string>
+    <string-array name="travel_mode_array">
+        <item>Walking</item>
+        <item>Bicycling</item>
+        <item>Driving</item>
+    </string-array>
+    
+    <string name="interest_type_prompt">Choose a points of interest type</string>
+    <string-array name="interest_type_array">
+        <item>Food</item>
+        <item>Shopping</item>
+    </string-array>
+    
 </resources>
