@@ -66,10 +66,12 @@ public class GPSInfoScreen  extends Activity {
         Log.d("GPSInfo, defaultInterestValue", defaultInterestValue); 
         if (defaultInterestValue.equals("Food")) {
             interestSpinner.setSelection(0);
-        } else if (defaultInterestValue.equals("Shopping Mall")) {
+        } else if (defaultInterestValue.equals("Bar")) {
             interestSpinner.setSelection(1);
-        } else if (defaultInterestValue.equals("Subway Station")) {
+        } else if (defaultInterestValue.equals("Store")) {
             interestSpinner.setSelection(2);
+        } else if (defaultInterestValue.equals("School")) {
+            interestSpinner.setSelection(3);
         } 
         
 		// Get LocationManager
@@ -180,11 +182,13 @@ public class GPSInfoScreen  extends Activity {
             String selectedItem = parent.getItemAtPosition(pos).toString();
             if (selectedItem.equals("Food")) {
                 i_type = "food";
-            } else if (selectedItem.equals("Shopping Mall")) {
-                i_type = "shopping_mall";
-            } else if (selectedItem.equals("Subway Station")) {
-                i_type = "subway_station";
-            }
+            } else if (selectedItem.equals("Bar")) {
+                i_type = "bar";
+            } else if (selectedItem.equals("Store")) {
+                i_type = "store";
+            } else if (selectedItem.equals("School")) {
+                i_type = "school";
+            }            
             Log.d("GPSInfo, interestTypeSpinner", selectedItem);
         }
 
@@ -201,6 +205,8 @@ public class GPSInfoScreen  extends Activity {
         intent.putExtra("toLat", toLat);
         intent.putExtra("mode", mode);
         intent.putExtra("i_type", i_type);
+        // Siyin TODO:
+        // pass pastRoad to MapRouteScreen
         startActivity(intent);
     }
     

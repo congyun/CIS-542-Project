@@ -40,11 +40,13 @@ public class MapRouteScreen extends MapActivity {
         private Drawable d_marker;
         private Drawable i_marker;
         
+        private String roadInfoToC; // msg will be sent to C program
+        
         /*Params that need to be passed from main program*/
         private double fromLat, fromLon, toLat, toLon;
         private RoadProvider.Mode mode;
         private String i_type;
-        private Road pastRoad = new Road(); // at least the current position
+        private Road pastRoad; // at least the current position
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -64,8 +66,6 @@ public class MapRouteScreen extends MapActivity {
                 toLat = getIntent().getDoubleExtra("toLat", 0.0);
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
                 i_type = getIntent().getStringExtra("i_type");
-                
-                
                 Log.d("MapRoute, fromLon", Double.toString(fromLon));
                 Log.d("MapRoute, fromLat", Double.toString(fromLat));
                 Log.d("MapRoute, toLon", Double.toString(toLon));
@@ -78,6 +78,14 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, mode", "DRIVING");
                 }
                 Log.d("MapRoute, i_type", i_type);
+                // Siyin TODO:
+                // get pastRoad from intent
+                
+                // Congyun TODO:
+                // please initialize a test pastRoad which contains current location.
+                // I don't know how to initialize mRoute field...
+                pastRoad = new Road();
+                pastRoad.mTime = 0;
                 
                 
                 Thread rThread = new Thread() {
@@ -105,6 +113,19 @@ public class MapRouteScreen extends MapActivity {
         		{
         			Log.v("SearchPlaces", mList.results.get(i).toString());
         		}
+        		
+        		// parse mRoad.mDescription to get roadInfoToC
+        		String[] infos = mRoad.mDescription.split("[ )]");
+        		if (infos.length > 4) {
+        		    // Known description format: "Distance: 1.0mi (about 19 mins)"
+        		    roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+        		} else {
+        		    // Unknown description format
+        		    roadInfoToC = mRoad.mDescription;
+        		}
+        		
+        		Log.d("mRoad.mDescription", mRoad.mDescription);
+        		Log.d("roadInfoToC", roadInfoToC);
         		
 /*        		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
@@ -161,11 +182,16 @@ public class MapRouteScreen extends MapActivity {
         }
         
         
-        // destinationChange(double toLat, double toLon)
+        // Conyun TODO:
+        // provide a function like destinationChange(double toLat, double toLon)
+        // which will be called when the destination position changed.
+        // may need to requery the route and repaint
+        // Not very important since temp don't know how to test this....
+        
         
         public void onBackToMainButtonClick(View view) {
+            // Siyin TODO:
             // pastRoad updated -> pass back to GPSInfo
-            
             
             finish();
         }
@@ -176,7 +202,7 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("SendThread", "Connecting.");
                     
                     DeviceConnector c = new DeviceConnector();
-                    c.sendMessage(mRoad.mDescription);
+                    c.sendMessage(roadInfoToC);
                     
                     Log.d("SendThread", "Closed.");
                 } catch (Exception e) {

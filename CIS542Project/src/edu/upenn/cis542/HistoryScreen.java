@@ -11,7 +11,7 @@ public class HistoryScreen  extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history);
 		
-		//Yufei:
+		//Yufei TODO:
 		// get pastRoads records from database, pass to Road objects
 		
 	}

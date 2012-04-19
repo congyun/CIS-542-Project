@@ -5,7 +5,7 @@ public class Road {
         public String mDescription;
         public int mColor;
         public int mWidth;
-        public long time = 0;
+        public long mTime = 0;
         public double[][] mRoute = new double[][] {};
         public Point[] mPoints = new Point[] {};
 }

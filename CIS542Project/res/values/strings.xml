@@ -13,8 +13,9 @@
     <string name="interest_type_prompt">Choose a points of interests type</string>
     <string-array name="interest_type_array">
         <item>Food</item>
-        <item>Shopping Mall</item>
-        <item>Subway Station</item>>
+        <item>Bar</item>
+        <item>Store</item>
+        <item>School</item>
     </string-array>
 
     <string name="alert_distance_prompt">Choose alter distance</string>

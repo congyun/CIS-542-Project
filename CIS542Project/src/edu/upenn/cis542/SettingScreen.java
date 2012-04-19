@@ -1,11 +1,8 @@
 package edu.upenn.cis542;
 
-import edu.upenn.cis542.GPSInfoScreen.interestTypeSpinnerOnItemSelectedListener;
-import edu.upenn.cis542.GPSInfoScreen.travelModeSpinnerOnItemSelectedListener;
-import edu.upenn.cis542.route.RoadProvider;
+
 import edu.upenn.cis542.utilities.AppConstants;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,13 +48,15 @@ public class SettingScreen  extends Activity{
         interestSpinner.setAdapter(interestAdapter);
         interestSpinner.setOnItemSelectedListener(new interestTypeSpinnerOnItemSelectedListener());
         String defaultInterestValue = settings.getString(AppConstants.DEFAULT_INTEREST_TYPE_KEY, "");
-        Log.d("Setting, defaultInterestValue", defaultInterestValue); 
+        Log.d("Setting, defaultInterestValue", defaultInterestValue);
         if (defaultInterestValue.equals("Food")) {
             interestSpinner.setSelection(0);
-        } else if (defaultInterestValue.equals("Shopping Mall")) {
+        } else if (defaultInterestValue.equals("Bar")) {
             interestSpinner.setSelection(1);
-        } else if (defaultInterestValue.equals("Subway Station")) {
+        } else if (defaultInterestValue.equals("Store")) {
             interestSpinner.setSelection(2);
+        } else if (defaultInterestValue.equals("School")) {
+            interestSpinner.setSelection(3);
         }
         
         // initialize alertDistanceSpinner

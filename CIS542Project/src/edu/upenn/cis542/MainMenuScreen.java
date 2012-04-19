@@ -97,7 +97,7 @@ public class MainMenuScreen  extends Activity{
 		editor.remove("logged");
 		editor.commit();
 		
-		// Yufei: 
+		// Yufei TODO: 
 		// store a pastRoad object into database
 		
 		
