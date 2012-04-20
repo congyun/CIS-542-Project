@@ -33,7 +33,7 @@ public class SearchPlaces {
 	public SearchPlaces(){
 		
 		sensor = false;
-		radius = 1000;
+		radius = 500;
 		m_placeslist = new PlacesList();
 				
 	}

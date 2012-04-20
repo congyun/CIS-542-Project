@@ -91,7 +91,6 @@ public class MapRouteScreen extends MapActivity {
                 Thread rThread = new Thread() {
                         @Override
                         public void run() {
-                                
                                 String url = RoadProvider.getUrl(fromLat, fromLon, toLat, toLon,mode);
                                 InputStream is = RoadProvider.getConnection(url);
                                 mRoad = RoadProvider.getRoute(is);
@@ -127,10 +126,10 @@ public class MapRouteScreen extends MapActivity {
         		Log.d("mRoad.mDescription", mRoad.mDescription);
         		Log.d("roadInfoToC", roadInfoToC);
         		
-/*        		// Send Message to Device
+        		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
                 sThread.start();
-*/        
+        
         		
         		// Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -199,14 +198,14 @@ public class MapRouteScreen extends MapActivity {
         public class SendThread implements Runnable {
             public void run() {
                 try {
-                    Log.d("SendThread", "Connecting.");
+                    Log.d("SendThread", "Connecting");
                     
                     DeviceConnector c = new DeviceConnector();
                     c.sendMessage(roadInfoToC);
-                    
-                    Log.d("SendThread", "Closed.");
+
+                    Log.d("SendThread", "Finished");
                 } catch (Exception e) {
-                    Log.e("SendThread", "Error", e);
+                    Log.e("SendThread", "Exception");
                 }
             }
         }

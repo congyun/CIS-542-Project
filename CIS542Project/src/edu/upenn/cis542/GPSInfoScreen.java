@@ -23,13 +23,14 @@ import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class GPSInfoScreen  extends Activity {
 	// default initialize params
-    double fromLat = 39.952881;
-    double fromLon = -75.209437;
-    double toLat = 39.952759;
-    double toLon = -75.192776;
-    RoadProvider.Mode mode = RoadProvider.Mode.WALKING;; // travel mode
+    double fromLat = 0; // 39.952881
+    double fromLon = 0; // -75.209437
+    double toLat = 0; // 39.952759
+    double toLon = 0; // -75.192776
+    RoadProvider.Mode mode = RoadProvider.Mode.WALKING; // travel mode
     String i_type = "food"; // points of interests type
     
+    DeviceConnector.ThreadStatus readThreadStatus = DeviceConnector.ThreadStatus.OK;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class GPSInfoScreen  extends Activity {
             travelSpinner.setSelection(1);
         } else if (defaultTravelValue.equals("Driving")) {
             travelSpinner.setSelection(2);
+        } else {
+            travelSpinner.setSelection(0); // mode = RoadProvider.Mode.WALKING
         }
         
 	    // initialize interestTypeSpinner
@@ -73,7 +76,9 @@ public class GPSInfoScreen  extends Activity {
             interestSpinner.setSelection(2);
         } else if (defaultInterestValue.equals("School")) {
             interestSpinner.setSelection(3);
-        } 
+        } else {
+            interestSpinner.setSelection(0); // i_type = "food"
+        }
         
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -126,36 +131,44 @@ public class GPSInfoScreen  extends Activity {
 						locationListener);
         
 		
-/*		// Get Message and destination GPX location from C program
+		// Get Message and destination GPX location from C program
+		// If connection is lost, TEMP using default destination location
+        Thread rThread = new Thread(new ReadThread());
+        rThread.start();
 		try {
-		    Thread rThread = new Thread(new ReadThread());
-	        rThread.start();
 			rThread.join();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(getApplicationContext(), "Can not get Arduino GPS location, using default destination location", Toast.LENGTH_LONG).show();
-			toLat = 39.952759;
-	        toLon = -75.192776;
 		}
-*/
 		
-		toLat = 39.952759;
-        toLon = -75.192776;
+		if (readThreadStatus == DeviceConnector.ThreadStatus.ERROR) {
+		    if (toLat == 0 && toLon == 0) {
+	            toLat = 39.952759;
+	            toLon = -75.192776;
+	            Toast.makeText(getApplicationContext(), "Can not get Arduino GPS location, using default destination location", Toast.LENGTH_LONG).show();
+		    } else {
+		        Toast.makeText(getApplicationContext(), "Can not updated Arduino GPS location, using last known destination location", Toast.LENGTH_LONG).show();
+		    }
+		}
 		TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
 		destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
-	}	
+	}
 	
     public class ReadThread implements Runnable {
         public void run() {
             try {
+                Log.d("ReadThread", "Connecting");
+                
                 DeviceConnector c = new DeviceConnector();
-                Log.d("ReadThread", "Connecting.");
                 c.readData();
                 toLon = c.getLongitude();
-                toLat = c.getLatitude();                
-                Log.d("ReadThread", "Closed.");
+                toLat = c.getLatitude();
+                readThreadStatus = DeviceConnector.ThreadStatus.OK;
+                
+                Log.d("ReadThread", "Finished");
             } catch (Exception e) {
-                Log.e("ReadThread", "Error", e);
+                Log.e("ReadThread", "Exception");
+                readThreadStatus = DeviceConnector.ThreadStatus.ERROR;
             }
         }
     }

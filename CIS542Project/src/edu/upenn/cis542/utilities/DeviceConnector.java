@@ -6,8 +6,14 @@ import java.net.*;
 import android.util.Log;
 
 public class DeviceConnector {
+    public enum ThreadStatus {
+        OK,
+        ERROR
+    }
+    
     private String serverAddr = "158.130.102.127";
     private int serverPort = 19108;
+    private int timeOut = 3000; // socket timeout in milliseconds
     public long latitude = 0;
     public long longitude = 0;
     public boolean isPositiveLat = true;
@@ -46,36 +52,35 @@ public class DeviceConnector {
         BufferedReader in = null;
 
         try {
-        	socket = new Socket(serverAddr, serverPort);
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(serverAddr, serverPort), timeOut);
+            
        		out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            
+            out.println("GPSDATA\0");
+            String msg = in.readLine();
+            Log.d("readData", "msg:" + msg);
+            
+            if (msg != null) {
+                parseData(msg);
+            } else {
+                this.isPositiveLat = true;
+                this.latitude = 0;
+                this.isPositiveLong = true;
+                this.longitude = 0;
+            }
+        
+            out.close();
+            in.close();
+            socket.close();
         } catch (UnknownHostException e) {
-        	Log.e("readData", "Don't know about host");
+        	Log.e("DeviceConnector, readData", "Don't know about host");
+        	throw e;
         } catch (IOException e) {
-        	Log.e("readData", "Couldn't get I/O for the connection.");
+        	Log.e("DeviceConnector, readData", "Couldn't get I/O for the connection.");
+        	throw e;
         }
-
-		out.println("GPSDATA\0");
-		String msg = in.readLine();
-		Log.d("readData", "msg:" + msg);
-		
-		//for testing
-		//msg = "+39571276 -75114442";
-		//Log.d("readData", "changed msg to:" + msg);
-		
-		if (msg != null) {
-			parseData(msg);
-		} else {
-			this.isPositiveLat = true;
-			this.latitude = 0;
-			this.isPositiveLong = true;
-			this.longitude = 0;
-		}
-	
-		out.close();
-		in.close();
-		socket.close();
-
     }
 
     private void parseData(String input) {
@@ -103,20 +108,21 @@ public class DeviceConnector {
         BufferedReader in = null;
 
         try {
-        	socket = new Socket(serverAddr, serverPort);
-       		out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(serverAddr, serverPort), timeOut);
+            
+       		out = new PrintWriter(socket.getOutputStream(), true);            
+            out.println("MESSAGE\0");
+            out.println(msg+"\0");
+        
+            out.close();
+            socket.close();
         } catch (UnknownHostException e) {
-        	Log.e("sendData", "Don't know about host");
+        	Log.e("DeviceConnector, sendData", "Don't know about host");
+        	throw e;
         } catch (IOException e) {
-        	Log.e("sendData", "Couldn't get I/O for the connection.");
+        	Log.e("DeviceConnector, sendData", "Couldn't get I/O for the connection.");
+        	throw e;
         }
-
-		out.println("MESSAGE\0");
-		out.println(msg+"\0");
-	
-		out.close();
-		in.close();
-		socket.close();
     }
 }
