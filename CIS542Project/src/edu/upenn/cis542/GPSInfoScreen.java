@@ -15,6 +15,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.upenn.cis542.route.*;
 import edu.upenn.cis542.utilities.AppConstants;
@@ -76,8 +77,7 @@ public class GPSInfoScreen  extends Activity {
         
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		// Get the current location
+		// Get the current GPS location
 		String provider = LocationManager.GPS_PROVIDER;
 		Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 		if (lastKnownLocation != null)
@@ -85,12 +85,16 @@ public class GPSInfoScreen  extends Activity {
 			Log.d("GPSInfo, onCreate", "lastKnownLocation is OK");
 			fromLon = lastKnownLocation.getLongitude();
 			fromLat = lastKnownLocation.getLatitude();
-			TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
-			currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
 		} else {
 			Log.e("GPSInfo, onCreate", "lastKnownLocation is NULL");
+			fromLat = 39.952881;
+		    fromLon = -75.209437;
+		    Toast.makeText(getApplicationContext(), "Can not get your GPS location, using default start location", Toast.LENGTH_LONG).show();
 		}
-		
+        TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
+        currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
+        
+        
 		// Define a listener that responds to location updates
 		LocationListener locationListener = new LocationListener() {
 			// Called when a new location is found by the location provider.
@@ -114,7 +118,6 @@ public class GPSInfoScreen  extends Activity {
 				Log.d("GPSInfo, onCreate", "locationListener.onProviderDisabled");
 			}
 		};
-
 		// Register listener with Location Manager to receive updates
 		locationManager.requestLocationUpdates(
 		             LocationManager.GPS_PROVIDER, 
@@ -122,33 +125,31 @@ public class GPSInfoScreen  extends Activity {
 						0, // distance interval
 						locationListener);
         
-/*		// Get Message and destination GPX coordinates from Device
-		Thread rThread = new Thread(new ReadThread());
-		rThread.start();
+		
+/*		// Get Message and destination GPX location from C program
 		try {
+		    Thread rThread = new Thread(new ReadThread());
+	        rThread.start();
 			rThread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
+			Toast.makeText(getApplicationContext(), "Can not get Arduino GPS location, using default destination location", Toast.LENGTH_LONG).show();
+			toLat = 39.952759;
+	        toLon = -75.192776;
 		}
 */
-		Log.d("toLat", Double.toString(toLat));
-		Log.d("toLon", Double.toString(toLon));
 		
 		toLat = 39.952759;
-	    toLon = -75.192776;
-	    
+        toLon = -75.192776;
 		TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
-		String msgFromServer = "Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat);
-		destinationPositionTextView.setText(msgFromServer);
+		destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
 	}	
 	
     public class ReadThread implements Runnable {
         public void run() {
             try {
-                Log.d("ReadThread", "Connecting.");
-
                 DeviceConnector c = new DeviceConnector();
+                Log.d("ReadThread", "Connecting.");
                 c.readData();
                 toLon = c.getLongitude();
                 toLat = c.getLatitude();                
