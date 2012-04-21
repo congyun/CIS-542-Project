@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,8 +31,64 @@ public class GPSInfoScreen  extends Activity {
     RoadProvider.Mode mode = RoadProvider.Mode.WALKING; // travel mode
     String i_type = "food"; // points of interests type
     
-    DeviceConnector.ThreadStatus readThreadStatus = DeviceConnector.ThreadStatus.OK;
+    // readRemoteGPS related values
+    private Handler readRemoteGPSHandler = new Handler();
+    public static final int UPDATE_INTERVAL = 3000;
+    private Runnable readRemoteGPSTask = new Runnable() {
+        public void run() {
+            try {
+                Log.d("readRemoteGPSTask", "Connection Start");
+                
+                DeviceConnector c = new DeviceConnector();
+                c.readData();
+                
+                Log.d("readRemoteGPSTask", "Connection Done");
+                
+                double new_toLon = c.getLongitude();
+                double new_toLat = c.getLatitude();
+                
+                Log.d("new_toLon", Double.toString(new_toLon));
+                Log.d("new_toLat", Double.toString(new_toLat));
+                
+                if ((new_toLat != 0) && (new_toLon != 0)) {
+                    // new GPS location is valid
+                    toLon = new_toLon;
+                    toLat = new_toLat;
+                    TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+                    destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
+                } else if ((toLat == 0) && (toLon == 0)) {
+                    // first time, set to default detination location
+                    toLat = 39.952759;
+                    toLon = -75.192776;
+                    Toast.makeText(getApplicationContext(), "Can not get destination location, using default location", Toast.LENGTH_SHORT).show();
+                }
+                
+                Log.d("readRemoteGPSTask", "Finished");
+                
+                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+            } catch (Exception e) {
+                Log.e("readRemoteGPSTask", "Exception");
+                
+                if ((toLat == 0) && (toLon == 0)) {
+                    // first time, set to default detination location
+                    toLat = 39.952759;
+                    toLon = -75.192776;
+                    TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+                    destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
+
+                    Toast.makeText(getApplicationContext(), "Can not get destination location, using default location", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
+                }
+                
+                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+            }
+        }
+     };
 	
+     
+     
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,7 +97,25 @@ public class GPSInfoScreen  extends Activity {
 		// get SharedPreferences
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 		
-		// initialize travelModeSpinner
+		// Define a listener class that responds to travelModeSpinner updates
+	    class travelModeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+	        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	            String selectedItem = parent.getItemAtPosition(pos).toString();
+	            if (selectedItem.equals("Walking")) {
+	                mode = RoadProvider.Mode.WALKING;
+	            } else if (selectedItem.equals("Bicycling")) {
+	                mode = RoadProvider.Mode.BICYCLING;
+	            } else if (selectedItem.equals("Driving")) {
+	                mode = RoadProvider.Mode.DRIVING;
+	            }
+	            Log.d("GPSInfo, travelModeSpinner", selectedItem);
+	        }
+
+	        public void onNothingSelected(AdapterView<?> parent) {
+	          // Do nothing.
+	        }
+	    }
+	    // initialize travelModeSpinner
 		Spinner travelSpinner = (Spinner) findViewById(R.id.travelModeSpinner);
 	    ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(
 	            this, R.array.travel_mode_array, android.R.layout.simple_spinner_item);
@@ -59,6 +134,26 @@ public class GPSInfoScreen  extends Activity {
             travelSpinner.setSelection(0); // mode = RoadProvider.Mode.WALKING
         }
         
+        // Define a listener class that responds to interestTypeSpinner updates
+        class interestTypeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selectedItem = parent.getItemAtPosition(pos).toString();
+                if (selectedItem.equals("Food")) {
+                    i_type = "food";
+                } else if (selectedItem.equals("Bar")) {
+                    i_type = "bar";
+                } else if (selectedItem.equals("Store")) {
+                    i_type = "store";
+                } else if (selectedItem.equals("School")) {
+                    i_type = "school";
+                }            
+                Log.d("GPSInfo, interestTypeSpinner", selectedItem);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+              // Do nothing.
+            }
+        }
 	    // initialize interestTypeSpinner
 	    Spinner interestSpinner = (Spinner) findViewById(R.id.interestTypeSpinner);
         ArrayAdapter<CharSequence> interestAdapter = ArrayAdapter.createFromResource(
@@ -79,6 +174,7 @@ public class GPSInfoScreen  extends Activity {
         } else {
             interestSpinner.setSelection(0); // i_type = "food"
         }
+        
         
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -131,86 +227,11 @@ public class GPSInfoScreen  extends Activity {
 						locationListener);
         
 		
-		// Get Message and destination GPX location from C program
-		// If connection is lost, TEMP using default destination location
-        Thread rThread = new Thread(new ReadThread());
-        rThread.start();
-		try {
-			rThread.join();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		if (readThreadStatus == DeviceConnector.ThreadStatus.ERROR) {
-		    if (toLat == 0 && toLon == 0) {
-	            toLat = 39.952759;
-	            toLon = -75.192776;
-	            Toast.makeText(getApplicationContext(), "Can not get Arduino GPS location, using default destination location", Toast.LENGTH_LONG).show();
-		    } else {
-		        Toast.makeText(getApplicationContext(), "Can not updated Arduino GPS location, using last known destination location", Toast.LENGTH_LONG).show();
-		    }
-		}
-		TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
-		destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
+		// start readRemoteGPSTask
+		readRemoteGPSHandler.removeCallbacks(readRemoteGPSTask);
+		readRemoteGPSHandler.postDelayed(readRemoteGPSTask, 0);
 	}
 	
-    public class ReadThread implements Runnable {
-        public void run() {
-            try {
-                Log.d("ReadThread", "Connecting");
-                
-                DeviceConnector c = new DeviceConnector();
-                c.readData();
-                toLon = c.getLongitude();
-                toLat = c.getLatitude();
-                readThreadStatus = DeviceConnector.ThreadStatus.OK;
-                
-                Log.d("ReadThread", "Finished");
-            } catch (Exception e) {
-                Log.e("ReadThread", "Exception");
-                readThreadStatus = DeviceConnector.ThreadStatus.ERROR;
-            }
-        }
-    }
-    
-    public class travelModeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selectedItem = parent.getItemAtPosition(pos).toString();
-            if (selectedItem.equals("Walking")) {
-                mode = RoadProvider.Mode.WALKING;
-            } else if (selectedItem.equals("Bicycling")) {
-                mode = RoadProvider.Mode.BICYCLING;
-            } else if (selectedItem.equals("Driving")) {
-                mode = RoadProvider.Mode.DRIVING;
-            }
-            Log.d("GPSInfo, travelModeSpinner", selectedItem);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-          // Do nothing.
-        }
-    }
-    
-    public class interestTypeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selectedItem = parent.getItemAtPosition(pos).toString();
-            if (selectedItem.equals("Food")) {
-                i_type = "food";
-            } else if (selectedItem.equals("Bar")) {
-                i_type = "bar";
-            } else if (selectedItem.equals("Store")) {
-                i_type = "store";
-            } else if (selectedItem.equals("School")) {
-                i_type = "school";
-            }            
-            Log.d("GPSInfo, interestTypeSpinner", selectedItem);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-          // Do nothing.
-        }
-    }
-    
     public void onMapRouteButtonClick(View view) {
         Intent intent = new Intent(this, MapRouteScreen.class);
         intent.putExtra("fromLon", fromLon);
@@ -225,6 +246,10 @@ public class GPSInfoScreen  extends Activity {
     }
     
     public void onBackToMainButtonClick(View view) {
+        // stop readRemoteGPSTask
+        readRemoteGPSHandler.removeCallbacks(readRemoteGPSTask);
+        
+        // exit GPSInfoScreen
         finish();
     }
 }

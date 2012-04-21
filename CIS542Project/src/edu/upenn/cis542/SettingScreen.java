@@ -22,6 +22,21 @@ public class SettingScreen  extends Activity{
 		// get SharedPreferences
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 
+		// Define a listener class that responds to travelModeSpinner updates
+	    class travelModeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+	        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+	            String selectedItem = parent.getItemAtPosition(pos).toString();
+	            SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
+	            SharedPreferences.Editor editor = settings.edit();
+	            editor.putString(AppConstants.DEFAULT_TRAVEL_MODE_KEY, selectedItem);
+	            editor.commit();
+	            Log.d("Setting, travelModeSpinner", selectedItem);
+	        }
+
+	        public void onNothingSelected(AdapterView<?> parent) {
+	            // Do nothing.
+	        }
+	    }
 	    // initialize travelModeSpinner
         Spinner travelSpinner = (Spinner) findViewById(R.id.travelModeSpinner);
         ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(
@@ -40,6 +55,22 @@ public class SettingScreen  extends Activity{
             travelSpinner.setSelection(2);
         }
 
+        // Define a listener class that responds to interestTypeSpinner updates
+        class interestTypeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selectedItem = parent.getItemAtPosition(pos).toString();
+                
+                SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(AppConstants.DEFAULT_INTEREST_TYPE_KEY, selectedItem);
+                editor.commit();
+                Log.d("Setting, interestTypeSpinner", selectedItem);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        }
         // initialize interestTypeSpinner
         Spinner interestSpinner = (Spinner) findViewById(R.id.interestTypeSpinner);
         ArrayAdapter<CharSequence> interestAdapter = ArrayAdapter.createFromResource(
@@ -59,6 +90,28 @@ public class SettingScreen  extends Activity{
             interestSpinner.setSelection(3);
         }
         
+        // Define a listener class that responds to alertDistanceSpinner updates
+        class alertDistanceSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selectedItem = parent.getItemAtPosition(pos).toString();
+                
+                SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                if (selectedItem.equals("1")) {
+                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 1);
+                } else if (selectedItem.equals("3")) {
+                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 3);
+                } else if (selectedItem.equals("5")) {
+                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 5);
+                }
+                editor.commit();
+                Log.d("Setting, alertDistanceSpinner", selectedItem);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        }
         // initialize alertDistanceSpinner
         Spinner alertSpinner = (Spinner) findViewById(R.id.alertDistanceSpinner);
         ArrayAdapter<CharSequence> alertAdapter = ArrayAdapter.createFromResource(
@@ -75,62 +128,8 @@ public class SettingScreen  extends Activity{
         } else if (defaultAlertValue == 5) {
             alertSpinner.setSelection(2);
         }
-        
 	}
 
-    public class travelModeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selectedItem = parent.getItemAtPosition(pos).toString();
-            SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString(AppConstants.DEFAULT_TRAVEL_MODE_KEY, selectedItem);
-            editor.commit();
-            Log.d("Setting, travelModeSpinner", selectedItem);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-          // Do nothing.
-        }
-    }
-    
-    public class interestTypeSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selectedItem = parent.getItemAtPosition(pos).toString();
-            
-            SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString(AppConstants.DEFAULT_INTEREST_TYPE_KEY, selectedItem);
-            editor.commit();
-            Log.d("Setting, interestTypeSpinner", selectedItem);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-          // Do nothing.
-        }
-    }
-    
-    public class alertDistanceSpinnerOnItemSelectedListener implements OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selectedItem = parent.getItemAtPosition(pos).toString();
-            
-            SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
-            SharedPreferences.Editor editor = settings.edit();
-            if (selectedItem.equals("1")) {
-                editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 1);
-            } else if (selectedItem.equals("3")) {
-                editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 3);
-            } else if (selectedItem.equals("5")) {
-                editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 5);
-            }
-            editor.commit();
-            Log.d("Setting, alertDistanceSpinner", selectedItem);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-          // Do nothing.
-        }
-    }
-    
 	public void onBackToMainButtonClick(View view){
 		finish();
 	}
