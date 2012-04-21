@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -46,8 +47,29 @@ public class MapRouteScreen extends MapActivity {
         private double fromLat, fromLon, toLat, toLon;
         private RoadProvider.Mode mode;
         private String i_type;
-        private Road pastRoad; // at least the current position
+        private Road pastRoad = new Road(); // TODO: at least the current position
 
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            // Called when a new location is found by the location provider.
+            public void onLocationChanged(Location location) {
+                Log.d("MapRoute, locationListener", "onLocationChanged");
+            }
+    
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("MapRoute, locationListener", "onStatusChanged");
+            }
+    
+            public void onProviderEnabled(String provider) {
+                Log.d("MapRoute, locationListener", "onProviderEnabled");
+            }
+    
+            public void onProviderDisabled(String provider) {
+                Log.d("MapRoute, locationListener", "onProviderDisabled");
+            }
+        };
+        
+        
         @Override
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
@@ -59,7 +81,7 @@ public class MapRouteScreen extends MapActivity {
                 mapView.setBuiltInZoomControls(true);
                
                 
-                // get params from GPSInfoScreem
+                // get params from GPSInfoScreen
                 fromLon = getIntent().getDoubleExtra("fromLon", 0.0);
                 fromLat = getIntent().getDoubleExtra("fromLat", 0.0);
                 toLon = getIntent().getDoubleExtra("toLon", 0.0);
@@ -78,8 +100,9 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, mode", "DRIVING");
                 }
                 Log.d("MapRoute, i_type", i_type);
-                // Siyin TODO:
-                // get pastRoad from intent
+
+                // get pastRoad
+                //pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
                 
                 // Congyun TODO:
                 // please initialize a test pastRoad which contains current location.
@@ -134,32 +157,13 @@ public class MapRouteScreen extends MapActivity {
         		// Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                
-                // Define a listener that responds to location updates
-                LocationListener locationListener = new LocationListener() {
-                    // Called when a new location is found by the location provider.
-                    public void onLocationChanged(Location location) {
-                        Log.d("MapRoute, onCreate", "locationListener.onLocationChanged");
-                    }
-            
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                        Log.d("MapRoute, onCreate", "locationListener.onStatusChanged");
-                    }
-            
-                    public void onProviderEnabled(String provider) {
-                        Log.d("MapRoute, onCreate", "locationListener.onProviderEnabled");
-                    }
-            
-                    public void onProviderDisabled(String provider) {
-                        Log.d("MapRoute, onCreate", "locationListener.onProviderDisabled");
-                    }
-                };
-
                 // Register listener with Location Manager to receive updates
                 locationManager.requestLocationUpdates(
                              LocationManager.GPS_PROVIDER, 
                                 1000, // time interval
                                 0, // distance interval
-                                locationListener);        
+                                locationListener);
+                Log.d("MapRouteScreen", "Register locationListener");
         }
 
         // this handle change the description and mapview widgets
@@ -189,11 +193,21 @@ public class MapRouteScreen extends MapActivity {
         
         
         public void onBackToMainButtonClick(View view) {
-            // Siyin TODO:
-            // pastRoad updated -> pass back to GPSInfo
+            // Get LocationManager
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // Remove the location updates listener
+            locationManager.removeUpdates(locationListener);
+            Log.d("MapRouteScreen", "Remove locationListener");
+            
+            // create the Intent object to send BACK to the caller
+            Intent i = new Intent();
+            // put the CalendarEvent object into the Intent
+            //i.putExtra("pastRoad", pastRoad);
+            setResult(RESULT_OK, i);
             
             finish();
         }
+        
         
         public class SendThread implements Runnable {
             public void run() {

@@ -23,6 +23,10 @@ import edu.upenn.cis542.utilities.AppConstants;
 import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class GPSInfoScreen  extends Activity {
+    public static final int ACTIVITY_CreateNewMapRouteScreen = 1;
+    
+    Road pastRoad = new Road();
+    
 	// default initialize params
     double fromLat = 0; // 39.952881
     double fromLon = 0; // -75.209437
@@ -31,9 +35,34 @@ public class GPSInfoScreen  extends Activity {
     RoadProvider.Mode mode = RoadProvider.Mode.WALKING; // travel mode
     String i_type = "food"; // points of interests type
     
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new LocationListener() {
+        // Called when a new location is found by the location provider.
+        public void onLocationChanged(Location location) {
+            Log.d("GPSInfo, locationListener", "onLocationChanged");
+            fromLon = location.getLongitude();
+            fromLat = location.getLatitude();
+            TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
+            currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d("GPSInfo, locationListener", "onStatusChanged");
+        }
+
+        public void onProviderEnabled(String provider) {
+            Log.d("GPSInfo, locationListener", "onProviderEnabled");
+        }
+
+        public void onProviderDisabled(String provider) {
+            Log.d("GPSInfo, locationListener", "onProviderDisabled");
+        }
+    };
+    
     // readRemoteGPS related values
     private Handler readRemoteGPSHandler = new Handler();
-    public static final int UPDATE_INTERVAL = 3000;
+    private static final int UPDATE_INTERVAL = 3000;
+    private boolean whetherUpdate = false; // for testing, whether the coordinates are updated periodically or not
     private Runnable readRemoteGPSTask = new Runnable() {
         public void run() {
             try {
@@ -65,7 +94,9 @@ public class GPSInfoScreen  extends Activity {
                 
                 Log.d("readRemoteGPSTask", "Finished");
                 
-                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                if (whetherUpdate) {
+                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                }
             } catch (Exception e) {
                 Log.e("readRemoteGPSTask", "Exception");
                 
@@ -81,7 +112,9 @@ public class GPSInfoScreen  extends Activity {
                     Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
                 }
                 
-                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                if (whetherUpdate) {
+                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                }
             }
         }
      };
@@ -93,6 +126,9 @@ public class GPSInfoScreen  extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_info);
+		
+		// get pastRoad
+		//pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
 		
 		// get SharedPreferences
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
@@ -195,37 +231,14 @@ public class GPSInfoScreen  extends Activity {
         TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
         currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
         
-        
-		// Define a listener that responds to location updates
-		LocationListener locationListener = new LocationListener() {
-			// Called when a new location is found by the location provider.
-			public void onLocationChanged(Location location) {
-				Log.d("GPSInfo, onCreate", "locationListener.onLocationChanged");
-				fromLon = location.getLongitude();
-				fromLat = location.getLatitude();
-				TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
-				currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
-			}
-	
-			public void onStatusChanged(String provider, int status, Bundle extras) {
-				Log.d("GPSInfo, onCreate", "locationListener.onStatusChanged");
-			}
-	
-			public void onProviderEnabled(String provider) {
-				Log.d("GPSInfo, onCreate", "locationListener.onProviderEnabled");
-			}
-	
-			public void onProviderDisabled(String provider) {
-				Log.d("GPSInfo, onCreate", "locationListener.onProviderDisabled");
-			}
-		};
-		// Register listener with Location Manager to receive updates
+        // Register listener with Location Manager to receive updates
 		locationManager.requestLocationUpdates(
 		             LocationManager.GPS_PROVIDER, 
 						1000, // time interval
 						0, // distance interval
 						locationListener);
-        
+		Log.d("GPSInfoScreen", "Register locationListener");
+		
 		
 		// start readRemoteGPSTask
 		readRemoteGPSHandler.removeCallbacks(readRemoteGPSTask);
@@ -233,6 +246,12 @@ public class GPSInfoScreen  extends Activity {
 	}
 	
     public void onMapRouteButtonClick(View view) {
+        // Get LocationManager
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // Remove the location updates listener
+        locationManager.removeUpdates(locationListener);
+        Log.d("GPSInfoScreen", "Remove locationListener");
+        
         Intent intent = new Intent(this, MapRouteScreen.class);
         intent.putExtra("fromLon", fromLon);
         intent.putExtra("fromLat", fromLat);
@@ -240,14 +259,48 @@ public class GPSInfoScreen  extends Activity {
         intent.putExtra("toLat", toLat);
         intent.putExtra("mode", mode);
         intent.putExtra("i_type", i_type);
-        // Siyin TODO:
-        // pass pastRoad to MapRouteScreen
-        startActivity(intent);
+        //intent.putExtra("pastRoad", pastRoad);
+        startActivityForResult(intent, GPSInfoScreen.ACTIVITY_CreateNewMapRouteScreen);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // the requestCode lets us know which Activity it was
+        switch(requestCode) {
+            case ACTIVITY_CreateNewMapRouteScreen:
+                Log.d("GPDInfoScreen", "return from MapRouteScreen");
+                // get the Road from the Intent object
+                //Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
+                //pastRoad = updated_pastRoad;
+                
+                // Get LocationManager
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                // Register listener with Location Manager to receive updates
+                locationManager.requestLocationUpdates(
+                             LocationManager.GPS_PROVIDER, 
+                                1000, // time interval
+                                0, // distance interval
+                                locationListener);
+                Log.d("GPSInfoScreen", "Register again locationListener");
+                break;
+        }        
     }
     
     public void onBackToMainButtonClick(View view) {
+        // Get LocationManager
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // Remove the location updates listener
+        locationManager.removeUpdates(locationListener);
+        
         // stop readRemoteGPSTask
         readRemoteGPSHandler.removeCallbacks(readRemoteGPSTask);
+        
+        // create the Intent object to send BACK to the caller
+        Intent i = new Intent();
+        // put the CalendarEvent object into the Intent
+        //i.putExtra("pastRoad", pastRoad);
+        setResult(RESULT_OK, i);
         
         // exit GPSInfoScreen
         finish();
