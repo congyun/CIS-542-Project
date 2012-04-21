@@ -50,9 +50,15 @@ public class MainMenuScreen  extends Activity{
 		}
 
 		editor.commit();
+		
+		
+		
+		
+		
+		
 	}
 	
-	@Override
+/*	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater Inflater = getMenuInflater();
 		Inflater.inflate(R.menu.menu, menu);
@@ -70,7 +76,7 @@ public class MainMenuScreen  extends Activity{
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+*/
 	public void onGPSInfoButtonClick(View view){
 		Intent intent = new Intent(this, GPSInfoScreen.class);
 		startActivity(intent);

@@ -5,15 +5,10 @@ import java.net.*;
 
 import android.util.Log;
 
-public class DeviceConnector {
-    public enum ThreadStatus {
-        OK,
-        ERROR
-    }
-    
+public class DeviceConnector {    
     private String serverAddr = "158.130.102.127";
     private int serverPort = 19108;
-    private int timeOut = 3000; // socket timeout in milliseconds
+    private int timeOut = 1000; // socket timeout in milliseconds
     public long latitude = 0;
     public long longitude = 0;
     public boolean isPositiveLat = true;
