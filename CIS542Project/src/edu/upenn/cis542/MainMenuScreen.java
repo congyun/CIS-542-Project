@@ -131,7 +131,7 @@ public class MainMenuScreen  extends Activity{
         Log.d("MainMenuScreen", "Remove locationListener");
 	    
 		Intent intent = new Intent(this, GPSInfoScreen.class);
-		//intent.putExtra("pastRoad", pastRoad);
+		intent.putExtra("pastRoad", pastRoad);
 		startActivityForResult(intent, MainMenuScreen.ACTIVITY_CreateNewGPSInfoScreen);
 	}
 
@@ -143,8 +143,8 @@ public class MainMenuScreen  extends Activity{
 	        case ACTIVITY_CreateNewGPSInfoScreen:
 	            Log.d("GPDInfoScreen", "return from GPSInfoScreen");
 	            // get the Road from the Intent object
-	            //Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-	            //pastRoad = updated_pastRoad;
+	            Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
+	            pastRoad = updated_pastRoad;
 	            
 	            // Get LocationManager
 	            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

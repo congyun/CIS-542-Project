@@ -108,7 +108,7 @@ public class MapRouteScreen extends MapActivity {
                 // please initialize a test pastRoad which contains current location.
                 // I don't know how to initialize mRoute field...
                 pastRoad = new Road();
-                pastRoad.mTime = 0;
+                pastRoad.mStartTime = System.currentTimeMillis();
                 
                 
                 Thread rThread = new Thread() {
@@ -202,7 +202,7 @@ public class MapRouteScreen extends MapActivity {
             // create the Intent object to send BACK to the caller
             Intent i = new Intent();
             // put the CalendarEvent object into the Intent
-            //i.putExtra("pastRoad", pastRoad);
+            i.putExtra("pastRoad", pastRoad);
             setResult(RESULT_OK, i);
             
             finish();
