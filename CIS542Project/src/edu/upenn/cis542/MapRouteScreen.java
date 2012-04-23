@@ -1,15 +1,10 @@
 package edu.upenn.cis542;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +29,6 @@ import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class MapRouteScreen extends MapActivity {
 
-        private LinearLayout linearLayout;
         private MapView mapView;
         private MapController mapController;
         private Road mRoad;
@@ -174,8 +167,8 @@ public class MapRouteScreen extends MapActivity {
                 d_marker = getResources().getDrawable(R.drawable.marker_b);
                 i_marker = getResources().getDrawable(R.drawable.heart);
                 mapView.setBuiltInZoomControls(true);
+               
                 mapView.setSatellite(false);
-                 
                 mapController = mapView.getController();
                 mapController.setZoom(13);
 

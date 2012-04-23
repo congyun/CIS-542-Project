@@ -37,6 +37,7 @@ public class PointsOverlay extends BalloonItemizedOverlay<OverlayItem> {
 	}
 
 	@Override
+	//TODO current location and relevant info
 	protected boolean onBalloonTap(int index, OverlayItem item) {
 		Toast.makeText(c, "onBalloonTap for overlay index " + index,
 				Toast.LENGTH_LONG).show();

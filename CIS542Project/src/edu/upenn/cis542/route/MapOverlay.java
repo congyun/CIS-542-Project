@@ -80,20 +80,6 @@ public class MapOverlay extends com.google.android.maps.Overlay {
         
          dMarker.draw(canvas);         
          
-         /*draw points of interest markers*/
-        /* ArrayList<GeoPoint> i_plist = new ArrayList<GeoPoint>();
-         for(int i = 0; i < mList.results.size(); i++)
-         {
-        	 GeoPoint i_p = new GeoPoint( (int) (mList.results.get(i).latitude * 1E6), (int) (mList.results.get(i).longtitude * 1E6));
-        	 Point i_screenPts = new Point();
-             mv.getProjection().toPixels(i_p, i_screenPts);
-             iMarker.setBounds(i_screenPts.x-10, i_screenPts.y-10, i_screenPts.x+10, i_screenPts.y+10);
-             iMarker.draw(canvas);     
-             
-   
-         }
-        */ 
-         
             
 	}
 
@@ -116,34 +102,4 @@ public class MapOverlay extends com.google.android.maps.Overlay {
             }
     }
 	
-	/*Response when tap a marker on screen*/
-/*	public boolean onTap(GeoPoint p, MapView mapView)
-	{
- 
-		String i_name = null;
-		String i_vicinity = null;
-		double i_rating;
-		
-		for(int i = 0; i < mList.results.size()-3; i++)
-        {
-			GeoPoint dp = new GeoPoint((int) (mList.results.get(i).latitude *1E6), (int)(mList.results.get(i).longtitude *1E6));
-			if(dp.equals(p))
-			{
-				Log.v("onTap", "hit!");
-				i_name = mList.results.get(i).name;
-				i_vicinity = mList.results.get(i).vicinity;
-				i_rating = mList.results.get(i).rating;
-				
-				SimpleItemizedOverlay itemizedOverlay;
-	            itemizedOverlay = new SimpleItemizedOverlay(iMarker, mapView);
-	      		OverlayItem overlayItem = new OverlayItem(p, i_name, i_vicinity); 
-	      		itemizedOverlay.addOverlay(overlayItem);
-	      		List<Overlay> listOfOverlays = mapView.getOverlays();
-	      		listOfOverlays.add(itemizedOverlay);
-	      		mapView.invalidate();
-			}
-        }
-		 
-		return false;
-	}*/
 }
