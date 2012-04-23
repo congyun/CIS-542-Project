@@ -76,6 +76,7 @@ public class MapRouteScreen extends MapActivity {
                     // Congyun TODO:
                     // query? and draw pastRoad and suggestedRoad?
                     
+                    
                 } else {
                     Log.d("location", "OLD location");
                 }
@@ -122,7 +123,7 @@ public class MapRouteScreen extends MapActivity {
                         Log.d("MapRoute, readRemoteGPSTask", "Unchanged destination");
                     } else {
                         Log.d("MapRoute, readRemoteGPSTask", "Valid destination");
-                        // new GPS location is valid
+                        // new destination location is valid
                         // congyun TODO:
                         
                         
@@ -190,6 +191,7 @@ public class MapRouteScreen extends MapActivity {
                 
                 // Congyun TODO:
                 // query? and draw pastRoad
+                // pastRoad, contains past points coordinates, mStartTime, mEndTime
                 
                 Thread rThread = new Thread() {
                         @Override
@@ -204,7 +206,6 @@ public class MapRouteScreen extends MapActivity {
                 try {
                     rThread.join();
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 
@@ -266,13 +267,6 @@ public class MapRouteScreen extends MapActivity {
         protected boolean isRouteDisplayed() {
                 return false;
         }
-        
-        
-        // Conyun TODO:
-        // provide a function like destinationChange(double toLat, double toLon)
-        // which will be called when the destination position changed.
-        // may need to requery the route and repaint
-        // Not very important since temp don't know how to test this....
         
         
         public void onBackToMainButtonClick(View view) {
