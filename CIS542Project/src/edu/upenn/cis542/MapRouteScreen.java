@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -47,13 +48,37 @@ public class MapRouteScreen extends MapActivity {
         private double fromLat, fromLon, toLat, toLon;
         private RoadProvider.Mode mode;
         private String i_type;
-        private Road pastRoad; // contains at least the current position
+        Road pastRoad; // contains at least the current position
 
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
             // Called when a new location is found by the location provider.
             public void onLocationChanged(Location location) {
                 Log.d("MapRoute, locationListener", "onLocationChanged");
+                Log.d("location.getLongitude()", Double.toString(location.getLongitude()));
+                Log.d("location.getLatitude()", Double.toString(location.getLatitude()));
+                
+                // update pastRoad if it's a new location
+                if ((location.getLongitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude) ||
+                     (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
+                    pastRoad.mEndTime = System.currentTimeMillis();
+                    edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + 1];
+                    for (int i = 0; i < pastRoad.mPoints.length; i++)
+                        newPoints[i] =  pastRoad.mPoints[i];
+                    newPoints[pastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
+                    newPoints[pastRoad.mPoints.length].mLongitude = location.getLongitude();
+                    newPoints[pastRoad.mPoints.length].mLatitude = location.getLatitude();
+                    pastRoad.mPoints = newPoints;
+                    Log.d("pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                    Log.d("location", "NEW location");
+                
+                
+                    // Congyun TODO:
+                    // query? and draw pastRoad and suggestedRoad?
+                    
+                } else {
+                    Log.d("location", "OLD location");
+                }
             }
     
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -70,6 +95,63 @@ public class MapRouteScreen extends MapActivity {
         };
         
         
+        // readRemoteGPS related values
+        private Handler readRemoteGPSHandler = new Handler();
+        private static final int UPDATE_INTERVAL = 3000;
+        private boolean whetherUpdate = true; // for testing, whether the coordinates are updated periodically or not
+        private Runnable readRemoteGPSTask = new Runnable() {
+            public void run() {
+                try {
+                    Log.d("MapRoute, readRemoteGPSTask", "Connection Start");
+                    
+                    DeviceConnector c = new DeviceConnector();
+                    c.readData();
+                    
+                    Log.d("MapRoute, readRemoteGPSTask", "Connection Done");
+                    
+                    double new_toLon = c.getLongitude();
+                    double new_toLat = c.getLatitude();
+                    
+                    Log.d("MapRoute, new_toLon", Double.toString(new_toLon));
+                    Log.d("MapRoute, new_toLat", Double.toString(new_toLat));
+                    
+                    if ((new_toLat == 0) && (new_toLon == 0)) {
+                        Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
+                        Log.d("MapRoute, readRemoteGPSTask", "Invalid destination");
+                    } else if ((new_toLon == toLon) && (new_toLat == toLat)) {
+                        Log.d("MapRoute, readRemoteGPSTask", "Unchanged destination");
+                    } else {
+                        Log.d("MapRoute, readRemoteGPSTask", "Valid destination");
+                        // new GPS location is valid
+                        // congyun TODO:
+                        
+                        
+                        
+                        // update toLon & toLat
+                        // these will be passed back to GPSInfoScreen when this close
+                        toLon = new_toLon;
+                        toLat = new_toLat;                        
+                    }
+                    
+                    Log.d("MapRoute, readRemoteGPSTask", "Finished");
+                    
+                    if (whetherUpdate) {
+                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                    }
+                } catch (Exception e) {
+                    Log.e("MapRoute, readRemoteGPSTask", "Exception");
+                    
+                    Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
+                    
+                    if (whetherUpdate) {
+                        // wait longer time to update if got exception
+                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL * 4);
+                    }
+                }
+            }
+         };
+         
+        
         @Override
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
@@ -82,8 +164,12 @@ public class MapRouteScreen extends MapActivity {
                
                 
                 // get params from GPSInfoScreen
-                fromLon = getIntent().getDoubleExtra("fromLon", 0.0);
-                fromLat = getIntent().getDoubleExtra("fromLat", 0.0);
+                // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
+                pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
+                //fromLon = getIntent().getDoubleExtra("fromLon", 0.0);
+                //fromLat = getIntent().getDoubleExtra("fromLat", 0.0);
+                fromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
+                fromLat = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude;
                 toLon = getIntent().getDoubleExtra("toLon", 0.0);
                 toLat = getIntent().getDoubleExtra("toLat", 0.0);
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
@@ -101,8 +187,6 @@ public class MapRouteScreen extends MapActivity {
                 }
                 Log.d("MapRoute, i_type", i_type);
 
-                // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
-                pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
                 
                 // Congyun TODO:
                 // query? and draw pastRoad
@@ -159,6 +243,10 @@ public class MapRouteScreen extends MapActivity {
                                 0, // distance interval
                                 locationListener);
                 Log.d("MapRouteScreen", "Register locationListener");
+                
+                // start readRemoteGPSTask
+                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                Log.d("MapRouteScreen", "Start readRemoteGPSTask");
         }
 
         // this handle change the description and mapview widgets
@@ -194,8 +282,14 @@ public class MapRouteScreen extends MapActivity {
             locationManager.removeUpdates(locationListener);
             Log.d("MapRouteScreen", "Remove locationListener");
             
+            // stop readRemoteGPSTask
+            readRemoteGPSHandler.removeCallbacks(readRemoteGPSTask);
+            Log.d("MapRouteScreen", "Stop readRemoteGPSTask");
+            
             // create the Intent object to send BACK to the caller
             Intent i = new Intent();
+            i.putExtra("toLon", toLon);
+            i.putExtra("toLat", toLat);
             // put the pastRoad object into the Intent
             i.putExtra("pastRoad", pastRoad);
             setResult(RESULT_OK, i);

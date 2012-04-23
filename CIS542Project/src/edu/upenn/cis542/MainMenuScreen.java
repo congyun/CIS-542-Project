@@ -29,8 +29,26 @@ public class MainMenuScreen  extends Activity{
         // Called when a new location is found by the location provider.
         public void onLocationChanged(Location location) {
             Log.d("MainMenu, locationListener", "onLocationChanged");
-            Log.d("fromLon", Double.toString(location.getLongitude()));
-            Log.d("fromLat", Double.toString(location.getLatitude()));
+            Log.d("location.getLongitude()", Double.toString(location.getLongitude()));
+            Log.d("location.getLatitude()", Double.toString(location.getLatitude()));
+            
+            // update pastRoad if it's a new location
+            if ((location.getLongitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude) ||
+                 (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
+                pastRoad.mEndTime = System.currentTimeMillis();
+                edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + 1];
+                for (int i = 0; i < pastRoad.mPoints.length; i++) {
+                    newPoints[i] = pastRoad.mPoints[i];
+                }
+                newPoints[pastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
+                newPoints[pastRoad.mPoints.length].mLongitude = location.getLongitude();
+                newPoints[pastRoad.mPoints.length].mLatitude = location.getLatitude();
+                pastRoad.mPoints = newPoints;
+                Log.d("pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                Log.d("location", "NEW location");
+            } else {
+                Log.d("location", "OLD location");
+            }
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -96,8 +114,8 @@ public class MainMenuScreen  extends Activity{
         if (lastKnownLocation != null)
         {
             Log.d("MainMenu, onCreate", "lastKnownLocation is OK");
-            Log.d("fromLon", Double.toString(lastKnownLocation.getLongitude()));
-            Log.d("fromLat", Double.toString(lastKnownLocation.getLatitude()));
+            Log.d("lastKnownLocation.getLongitude()", Double.toString(lastKnownLocation.getLongitude()));
+            Log.d("lastKnownLocation.getLatitude()", Double.toString(lastKnownLocation.getLatitude()));
             pastRoad.mPoints[0].mLongitude = lastKnownLocation.getLongitude();
             pastRoad.mPoints[0].mLatitude = lastKnownLocation.getLatitude();
         } else {
@@ -153,9 +171,11 @@ public class MainMenuScreen  extends Activity{
 	    switch(requestCode) {
 	        case ACTIVITY_CreateNewGPSInfoScreen:
 	            Log.d("GPDInfoScreen", "return from GPSInfoScreen");
-	            // get the Road from the Intent object
+	            
+                // get the Road from the Intent object
+	            Log.d("OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
 	            pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-
+	            Log.d("NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
 	            
 	            // Get LocationManager
 	            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -186,6 +206,12 @@ public class MainMenuScreen  extends Activity{
 	}
 	
 	public void onLogoutButtonClick(View view){
+	    // Get LocationManager
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // Remove the location updates listener
+        locationManager.removeUpdates(locationListener);
+        Log.d("MainMenuScreen", "Remove locationListener");
+        
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.remove("logged");
