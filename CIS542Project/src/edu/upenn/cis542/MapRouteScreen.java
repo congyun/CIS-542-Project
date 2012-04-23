@@ -77,6 +77,11 @@ public class MapRouteScreen extends MapActivity {
                     // query? and draw pastRoad and suggestedRoad?
                     
                     
+                    
+                    // TODO: send updated message to C
+                    // Send Message to Device
+                    //Thread sThread = new Thread(new SendThread());
+                    //sThread.start();
                 } else {
                     Log.d("location", "OLD location");
                 }
@@ -131,7 +136,12 @@ public class MapRouteScreen extends MapActivity {
                         // update toLon & toLat
                         // these will be passed back to GPSInfoScreen when this close
                         toLon = new_toLon;
-                        toLat = new_toLat;                        
+                        toLat = new_toLat;
+                        
+                        // TODO: send updated message to C
+                        // Send Message to Device
+                        //Thread sThread = new Thread(new SendThread());
+                        //sThread.start();
                     }
                     
                     Log.d("MapRoute, readRemoteGPSTask", "Finished");
