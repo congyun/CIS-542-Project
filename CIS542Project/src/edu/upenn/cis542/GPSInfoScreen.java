@@ -128,7 +128,7 @@ public class GPSInfoScreen  extends Activity {
 		setContentView(R.layout.gps_info);
 		
 		// get pastRoad
-		pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
+		//pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
 		
 		// get SharedPreferences
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
@@ -271,8 +271,8 @@ public class GPSInfoScreen  extends Activity {
             case ACTIVITY_CreateNewMapRouteScreen:
                 Log.d("GPDInfoScreen", "return from MapRouteScreen");
                 // get the Road from the Intent object
-                Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-                pastRoad = updated_pastRoad;
+                //Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
+                //pastRoad = updated_pastRoad;
                 
                 // Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

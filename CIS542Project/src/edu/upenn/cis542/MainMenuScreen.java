@@ -1,5 +1,6 @@
 package edu.upenn.cis542;
 
+import edu.upenn.cis542.route.Point;
 import edu.upenn.cis542.route.Road;
 import edu.upenn.cis542.utilities.AppConstants;
 import android.app.Activity;
@@ -21,7 +22,7 @@ import android.widget.Toast;
 public class MainMenuScreen  extends Activity{
     public static final int ACTIVITY_CreateNewGPSInfoScreen = 1;
     
-    Road pastRoad = new Road();
+    Road pastRoad;
     
     // Define a listener that responds to location updates
     LocationListener locationListener = new LocationListener() {
@@ -80,7 +81,7 @@ public class MainMenuScreen  extends Activity{
 
 		editor.commit();
 		
-		
+		pastRoad = new Road();
 		// Get LocationManager
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         // Get the current GPS location
@@ -91,6 +92,13 @@ public class MainMenuScreen  extends Activity{
             Log.d("MainMenu, onCreate", "lastKnownLocation is OK");
             Log.d("fromLon", Double.toString(lastKnownLocation.getLongitude()));
             Log.d("fromLat", Double.toString(lastKnownLocation.getLatitude()));
+            
+            //Point[] newPoints = new Point[1];
+            //newPoints[0] = new Point();
+            
+            
+            
+            
         } else {
             Log.e("MainMenu, onCreate", "lastKnownLocation is NULL");
         }
