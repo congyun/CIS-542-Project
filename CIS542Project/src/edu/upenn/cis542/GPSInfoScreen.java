@@ -25,7 +25,7 @@ import edu.upenn.cis542.utilities.DeviceConnector;
 public class GPSInfoScreen  extends Activity {
     public static final int ACTIVITY_CreateNewMapRouteScreen = 1;
     
-    Road pastRoad = new Road();
+    Road pastRoad;
     
 	// default initialize params
     double fromLat = 0; // 39.952881
@@ -126,10 +126,7 @@ public class GPSInfoScreen  extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_info);
-		
-		// get pastRoad
-		//pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
-		
+		        
 		// get SharedPreferences
 		SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
 		
@@ -211,26 +208,14 @@ public class GPSInfoScreen  extends Activity {
             interestSpinner.setSelection(0); // i_type = "food"
         }
         
+        // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
+        pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
+        TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
+        Point lastPoint = pastRoad.mPoints[pastRoad.mPoints.length - 1];
+        currentPositionTextView.setText("You are at " + Double.toString(lastPoint.mLongitude) + ", " +Double.toString(lastPoint.mLatitude));
         
 		// Get LocationManager
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// Get the current GPS location
-		String provider = LocationManager.GPS_PROVIDER;
-		Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
-		if (lastKnownLocation != null)
-		{
-			Log.d("GPSInfo, onCreate", "lastKnownLocation is OK");
-			fromLon = lastKnownLocation.getLongitude();
-			fromLat = lastKnownLocation.getLatitude();
-		} else {
-			Log.e("GPSInfo, onCreate", "lastKnownLocation is NULL");
-			fromLat = 39.952881;
-		    fromLon = -75.209437;
-		    Toast.makeText(getApplicationContext(), "Can not get your GPS location, using default start location", Toast.LENGTH_LONG).show();
-		}
-        TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
-        currentPositionTextView.setText("You are at " + Double.toString(fromLon) + ", " +Double.toString(fromLat));
-        
         // Register listener with Location Manager to receive updates
 		locationManager.requestLocationUpdates(
 		             LocationManager.GPS_PROVIDER, 
@@ -270,9 +255,8 @@ public class GPSInfoScreen  extends Activity {
         switch(requestCode) {
             case ACTIVITY_CreateNewMapRouteScreen:
                 Log.d("GPDInfoScreen", "return from MapRouteScreen");
-                // get the Road from the Intent object
-                //Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-                //pastRoad = updated_pastRoad;
+                // get pastRoad from the Intent object
+                pastRoad = (Road) (intent.getExtras().get("pastRoad"));
                 
                 // Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -298,8 +282,8 @@ public class GPSInfoScreen  extends Activity {
         
         // create the Intent object to send BACK to the caller
         Intent i = new Intent();
-        // put the CalendarEvent object into the Intent
-        //i.putExtra("pastRoad", pastRoad);
+        // put the pastRoad object into the Intent
+        i.putExtra("pastRoad", pastRoad);
         setResult(RESULT_OK, i);
         
         // exit GPSInfoScreen

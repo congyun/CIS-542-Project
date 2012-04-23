@@ -47,7 +47,7 @@ public class MapRouteScreen extends MapActivity {
         private double fromLat, fromLon, toLat, toLon;
         private RoadProvider.Mode mode;
         private String i_type;
-        private Road pastRoad = new Road(); // TODO: at least the current position
+        private Road pastRoad; // contains at least the current position
 
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
@@ -101,15 +101,11 @@ public class MapRouteScreen extends MapActivity {
                 }
                 Log.d("MapRoute, i_type", i_type);
 
-                // get pastRoad
-                //pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
+                // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
+                pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
                 
                 // Congyun TODO:
-                // please initialize a test pastRoad which contains current location.
-                // I don't know how to initialize mRoute field...
-                pastRoad = new Road();
-                pastRoad.mStartTime = System.currentTimeMillis();
-                
+                // query? and draw pastRoad
                 
                 Thread rThread = new Thread() {
                         @Override
@@ -156,7 +152,6 @@ public class MapRouteScreen extends MapActivity {
         		
         		// Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-               
                 // Register listener with Location Manager to receive updates
                 locationManager.requestLocationUpdates(
                              LocationManager.GPS_PROVIDER, 
@@ -201,7 +196,7 @@ public class MapRouteScreen extends MapActivity {
             
             // create the Intent object to send BACK to the caller
             Intent i = new Intent();
-            // put the CalendarEvent object into the Intent
+            // put the pastRoad object into the Intent
             i.putExtra("pastRoad", pastRoad);
             setResult(RESULT_OK, i);
             

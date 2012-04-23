@@ -81,7 +81,13 @@ public class MainMenuScreen  extends Activity{
 
 		editor.commit();
 		
+		// create new pastRoad object, record start time
 		pastRoad = new Road();
+		pastRoad.mStartTime = System.currentTimeMillis();
+		pastRoad.mEndTime = pastRoad.mStartTime;
+		pastRoad.mPoints = new Point[1];
+        pastRoad.mPoints[0] = new Point();
+        
 		// Get LocationManager
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         // Get the current GPS location
@@ -92,17 +98,14 @@ public class MainMenuScreen  extends Activity{
             Log.d("MainMenu, onCreate", "lastKnownLocation is OK");
             Log.d("fromLon", Double.toString(lastKnownLocation.getLongitude()));
             Log.d("fromLat", Double.toString(lastKnownLocation.getLatitude()));
-            
-            //Point[] newPoints = new Point[1];
-            //newPoints[0] = new Point();
-            
-            
-            
-            
+            pastRoad.mPoints[0].mLongitude = lastKnownLocation.getLongitude();
+            pastRoad.mPoints[0].mLatitude = lastKnownLocation.getLatitude();
         } else {
             Log.e("MainMenu, onCreate", "lastKnownLocation is NULL");
+            pastRoad.mPoints[0].mLongitude = -75.209437;
+            pastRoad.mPoints[0].mLatitude = 39.952881;
+            Toast.makeText(getApplicationContext(), "Can not get your GPS location, using default start location", Toast.LENGTH_LONG).show();            
         }
-        
         // Register listener with Location Manager to receive updates
         locationManager.requestLocationUpdates(
                      LocationManager.GPS_PROVIDER, 
@@ -151,8 +154,8 @@ public class MainMenuScreen  extends Activity{
 	        case ACTIVITY_CreateNewGPSInfoScreen:
 	            Log.d("GPDInfoScreen", "return from GPSInfoScreen");
 	            // get the Road from the Intent object
-	            Road updated_pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-	            pastRoad = updated_pastRoad;
+	            pastRoad = (Road) (intent.getExtras().get("pastRoad"));
+
 	            
 	            // Get LocationManager
 	            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
