@@ -24,6 +24,7 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 import edu.upenn.cis542.route.*;
+import edu.upenn.cis542.utilities.AppConstants;
 import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class MapRouteScreen extends MapActivity {
@@ -202,7 +203,7 @@ public class MapRouteScreen extends MapActivity {
         
         // readRemoteGPS related values
         private Handler readRemoteGPSHandler = new Handler();
-        private static final int UPDATE_INTERVAL = 5000;
+        //private static final int UPDATE_INTERVAL = 5000;
         private boolean whetherUpdate = true; // for testing, whether the coordinates are updated periodically or not
         private Runnable readRemoteGPSTask = new Runnable() {
             public void run() {
@@ -271,7 +272,7 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, readRemoteGPSTask", "Finished");
                     
                     if (whetherUpdate) {
-                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL);
                     }
                 } catch (Exception e) {
                     Log.e("MapRoute, readRemoteGPSTask", "Exception");
@@ -280,7 +281,7 @@ public class MapRouteScreen extends MapActivity {
                     
                     if (whetherUpdate) {
                         // wait longer time to update if got exception
-                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL * 4);
+                        readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL_FOR_CONNECTION_LOST);
                     }
                 }
             }
@@ -371,7 +372,7 @@ public class MapRouteScreen extends MapActivity {
                 Log.d("MapRouteScreen", "Register locationListener");
                 
                 // start readRemoteGPSTask
-                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL);
                 Log.d("MapRouteScreen", "Start readRemoteGPSTask");
         }
 

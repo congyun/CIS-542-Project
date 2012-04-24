@@ -154,7 +154,6 @@ public class GPSInfoScreen  extends Activity {
     
     // readRemoteGPS related values
     private Handler readRemoteGPSHandler = new Handler();
-    private static final int UPDATE_INTERVAL = 5000;
     private boolean whetherUpdate = true; // for testing, whether the coordinates are updated periodically or not
     private Runnable readRemoteGPSTask = new Runnable() {
         public void run() {
@@ -190,7 +189,7 @@ public class GPSInfoScreen  extends Activity {
                 Log.d("GPSInfo, readRemoteGPSTask", "Finished");
                 
                 if (whetherUpdate) {
-                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL);
                 }
             } catch (Exception e) {
                 Log.e("GPSInfo, readRemoteGPSTask", "Exception");
@@ -209,7 +208,7 @@ public class GPSInfoScreen  extends Activity {
                 
                 if (whetherUpdate) {
                     // wait longer time to update if got exception
-                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL * 4);
+                    readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL_FOR_CONNECTION_LOST);
                 }
             }
         }
@@ -441,7 +440,7 @@ public class GPSInfoScreen  extends Activity {
                 Log.d("GPSInfoScreen", "Register again locationListener");
                 
                 // start readRemoteGPSTask again
-                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, UPDATE_INTERVAL);
+                readRemoteGPSHandler.postDelayed(readRemoteGPSTask, AppConstants.UPDATE_INTERVAL);
                 Log.d("GPSInfoScreen", "Start again readRemoteGPSTask");
                 break;
         }        

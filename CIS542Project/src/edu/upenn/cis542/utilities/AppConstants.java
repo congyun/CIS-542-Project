@@ -3,6 +3,9 @@ package edu.upenn.cis542.utilities;
 public class AppConstants {
     public static final String PREFS_NAME = "GPSPrefs";
     
+    public static final int UPDATE_INTERVAL = 5000;
+    public static final int UPDATE_INTERVAL_FOR_CONNECTION_LOST = 20000;
+    
     public static final String DEFAULT_TRAVEL_MODE_KEY = "travel_mode";
     public static final String DEFAULT_TRAVEL_MODE_INITIAL_VALUE = "Walking";
     
