@@ -99,6 +99,28 @@ public class MainMenuScreen  extends Activity{
                 
                 pastRoad.mPoints = newPoints;
                 Log.d("MainMenu, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                
+                // parse and set points names
+                String[] nameInfos = null;
+                if(queriedPastRoad.mName != null)
+                {
+                    Log.d("MainMenu, queriedPastRoad.mName", "="+queriedPastRoad.mName);
+                    Log.d("MainMenu, OLD pastRoad.mStartName", "="+pastRoad.mStartName);
+                    Log.d("MainMenu, OLD pastRoad.mEndName", "="+pastRoad.mEndName);
+                    nameInfos = queriedPastRoad.mName.split("to");
+                    if (nameInfos.length > 1) {
+                        // Known name format: "XXXX to XXX"
+                        if (pastRoad.mStartName.equals("")) {
+                            // first time, set mStartName
+                            pastRoad.mStartName = nameInfos[0].trim();
+                        }
+                        pastRoad.mEndName = nameInfos[1].trim();
+                    } else {
+                        // Unknown name format
+                    }
+                    Log.d("MainMenu, NEW pastRoad.mStartName", "="+pastRoad.mStartName);
+                    Log.d("MainMenu, NEW pastRoad.mEndName", "="+pastRoad.mEndName);
+                }
             } else {
                 Log.d("MainMenu, location", "OLD location");
             }

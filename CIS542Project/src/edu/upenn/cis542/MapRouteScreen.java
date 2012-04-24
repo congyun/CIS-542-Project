@@ -118,7 +118,28 @@ public class MapRouteScreen extends MapActivity {
                     pastRoad.mPoints = newPoints;
                     Log.d("MapRoute, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                     
-                
+                    // parse and set points names
+                    String[] nameInfos = null;
+                    if(queriedPastRoad.mName != null)
+                    {
+                        Log.d("MapRoute, queriedPastRoad.mName", "="+queriedPastRoad.mName);
+                        Log.d("MapRoute, OLD pastRoad.mStartName", "="+pastRoad.mStartName);
+                        Log.d("MapRoute, OLD pastRoad.mEndName", "="+pastRoad.mEndName);
+                        nameInfos = queriedPastRoad.mName.split("to");
+                        if (nameInfos.length > 1) {
+                            // Known name format: "XXXX to XXX"
+                            if (pastRoad.mStartName.equals("")) {
+                                // first time, set mStartName
+                                pastRoad.mStartName = nameInfos[0].trim();
+                            }
+                            pastRoad.mEndName = nameInfos[1].trim();
+                        } else {
+                            // Unknown name format
+                        }
+                        Log.d("MapRoute, NEW pastRoad.mStartName", "="+pastRoad.mStartName);
+                        Log.d("MapRoute, NEW pastRoad.mEndName", "="+pastRoad.mEndName);
+                    }
+                    
                     //Setup params 
                     fromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
                     fromLat = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude;
@@ -131,13 +152,13 @@ public class MapRouteScreen extends MapActivity {
                     
                     // TODO: send updated message to C
                     // parse mRoad.mDescription to get roadInfoToC
-                    String[] infos = null;
+                    String[] descriptionInfos = null;
                     if(mRoad.mDescription!=null)
                     {
-                        infos = mRoad.mDescription.split("[ )]");
-                        if (infos.length > 4) {
+                        descriptionInfos = mRoad.mDescription.split("[ )]");
+                        if (descriptionInfos.length > 4) {
                             // Known description format: "Distance: 1.0mi (about 19 mins)"
-                            roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                            roadInfoToC = descriptionInfos[1] + "," + descriptionInfos[3] + " " + descriptionInfos[4];
                         } else {
                             // Unknown description format
                             roadInfoToC = mRoad.mDescription;
@@ -205,13 +226,13 @@ public class MapRouteScreen extends MapActivity {
                         
                         // TODO: send updated message to C
                         // parse mRoad.mDescription to get roadInfoToC
-                        String[] infos = null;
+                        String[] decriptionInfos = null;
                         if(mRoad.mDescription!=null)
                         {
-                            infos = mRoad.mDescription.split("[ )]");
-                            if (infos.length > 4) {
+                            decriptionInfos = mRoad.mDescription.split("[ )]");
+                            if (decriptionInfos.length > 4) {
                                 // Known description format: "Distance: 1.0mi (about 19 mins)"
-                                roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                                roadInfoToC = decriptionInfos[1] + "," + decriptionInfos[3] + " " + decriptionInfos[4];
                             } else {
                                 // Unknown description format
                                 roadInfoToC = mRoad.mDescription;
@@ -280,13 +301,13 @@ public class MapRouteScreen extends MapActivity {
 
                 
                 // parse mRoad.mDescription to get roadInfoToC
-                String[] infos = null;
+                String[] descriptionInfos = null;
                 if(mRoad.mDescription!=null)
                 {
-                    infos = mRoad.mDescription.split("[ )]");
-                    if (infos.length > 4) {
+                    descriptionInfos = mRoad.mDescription.split("[ )]");
+                    if (descriptionInfos.length > 4) {
                         // Known description format: "Distance: 1.0mi (about 19 mins)"
-                        roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                        roadInfoToC = descriptionInfos[1] + "," + descriptionInfos[3] + " " + descriptionInfos[4];
                     } else {
                         // Unknown description format
                         roadInfoToC = mRoad.mDescription;

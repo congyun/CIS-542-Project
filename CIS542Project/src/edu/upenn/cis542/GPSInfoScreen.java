@@ -113,6 +113,28 @@ public class GPSInfoScreen  extends Activity {
                 
                 pastRoad.mPoints = newPoints;
                 Log.d("GPSInfo, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                
+                // parse and set points names
+                String[] nameInfos = null;
+                if(queriedPastRoad.mName != null)
+                {
+                    Log.d("GPSInfo, queriedPastRoad.mName", "="+queriedPastRoad.mName);
+                    Log.d("GPSInfo, OLD pastRoad.mStartName", "="+pastRoad.mStartName);
+                    Log.d("GPSInfo, OLD pastRoad.mEndName", "="+pastRoad.mEndName);
+                    nameInfos = queriedPastRoad.mName.split("to");
+                    if (nameInfos.length > 1) {
+                        // Known name format: "XXXX to XXX"
+                        if (pastRoad.mStartName.equals("")) {
+                            // first time, set mStartName
+                            pastRoad.mStartName = nameInfos[0].trim();
+                        }
+                        pastRoad.mEndName = nameInfos[1].trim();
+                    } else {
+                        // Unknown name format
+                    }
+                    Log.d("GPSInfo, NEW pastRoad.mStartName", "="+pastRoad.mStartName);
+                    Log.d("GPSInfo, NEW pastRoad.mEndName", "="+pastRoad.mEndName);
+                }
             } else {
                 Log.d("GPSInfo, location", "OLD location");
             }
