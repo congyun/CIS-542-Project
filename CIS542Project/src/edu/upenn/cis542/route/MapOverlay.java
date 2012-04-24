@@ -37,8 +37,8 @@ public class MapOverlay extends com.google.android.maps.Overlay {
             m_toLon = toLon;
             m_isSuggestedRoad = isSuggested;
             
-            if (road.mRoute.length > 0) {
-                    mPoints = new ArrayList<GeoPoint>();
+            mPoints = new ArrayList<GeoPoint>();
+            if (road.mRoute.length > 0) {           
                     for (int i = 0; i < road.mRoute.length; i++) {
                             mPoints.add(new GeoPoint((int) (road.mRoute[i][1] * 1000000),
                                             (int) (road.mRoute[i][0] * 1000000)));

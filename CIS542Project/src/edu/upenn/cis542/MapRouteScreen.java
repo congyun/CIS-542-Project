@@ -24,7 +24,6 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 import edu.upenn.cis542.route.*;
-import edu.upenn.cis542.route.MapOverlay;
 import edu.upenn.cis542.utilities.DeviceConnector;
 
 public class MapRouteScreen extends MapActivity {
@@ -45,27 +44,79 @@ public class MapRouteScreen extends MapActivity {
         private String i_type;
         Road pastRoad; // contains at least the current position
 
+        // params used to query pastRoad
+        private double queriedFromLat, queriedFromLon, queriedToLat, queriedToLon;
+        private RoadProvider.Mode queriedMode;
+        private Road queriedPastRoad;
+        
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
             // Called when a new location is found by the location provider.
             public void onLocationChanged(Location location) {
                 Log.d("MapRoute, locationListener", "onLocationChanged");
-                Log.d("location.getLongitude()", Double.toString(location.getLongitude()));
-                Log.d("location.getLatitude()", Double.toString(location.getLatitude()));
+                Log.d("MapRoute, location.getLongitude()", Double.toString(location.getLongitude()));
+                Log.d("MapRoute, location.getLatitude()", Double.toString(location.getLatitude()));
                 
                 // update pastRoad if it's a new location
                 if ((location.getLongitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude) ||
                      (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
+                    Log.d("MapRoute, location", "NEW location");
+                    Log.d("MapRoute, OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                    
                     pastRoad.mEndTime = System.currentTimeMillis();
-                    edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + 1];
-                    for (int i = 0; i < pastRoad.mPoints.length; i++)
-                        newPoints[i] =  pastRoad.mPoints[i];
-                    newPoints[pastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
-                    newPoints[pastRoad.mPoints.length].mLongitude = location.getLongitude();
-                    newPoints[pastRoad.mPoints.length].mLatitude = location.getLatitude();
+                    
+                    queriedFromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
+                    queriedFromLat = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude;
+                    queriedToLon = location.getLongitude();
+                    queriedToLat = location.getLatitude();
+                    queriedMode = RoadProvider.Mode.WALKING; // TODO: change to default?
+                    Log.d("MapRoute, queriedFromLon", Double.toString(queriedFromLon));
+                    Log.d("MapRoute, queriedFromLat", Double.toString(queriedFromLat));
+                    Log.d("MapRoute, queriedToLon", Double.toString(queriedToLon));
+                    Log.d("MapRoute, queriedToLat", Double.toString(queriedToLat));
+                    if (queriedMode == RoadProvider.Mode.WALKING) {
+                        Log.d("MapRoute, queriedMode", "WALKING");
+                    } else if (queriedMode == RoadProvider.Mode.BICYCLING) {
+                        Log.d("MapRoute, queriedMode", "BICYCLING");
+                    } else if (queriedMode == RoadProvider.Mode.DRIVING) {
+                        Log.d("MapRoute, queriedMode", "DRIVING");
+                    }
+
+                    Thread rThread = new Thread() {
+                            @Override
+                            public void run() {
+                                    String url = RoadProvider.getUrl(queriedFromLat, queriedFromLon, queriedToLat, queriedToLon, queriedMode);
+                                    InputStream is = RoadProvider.getConnection(url);
+                                    queriedPastRoad = RoadProvider.getRoute(is);
+                            }
+                    };
+                    rThread.start();
+                    try {
+                        rThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    
+                    Log.d("MapRoute, queriedPastRoad.mPoints.length", Integer.toString(queriedPastRoad.mPoints.length));
+                    edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + queriedPastRoad.mPoints.length + 1];
+                    // copy old points
+                    for (int i = 0; i < pastRoad.mPoints.length; i++) {
+                        newPoints[i] = pastRoad.mPoints[i];
+                    }
+                    // add queried points on the road, not included from and to points
+                    for (int j = 0; j < queriedPastRoad.mPoints.length; j++) {
+                        newPoints[pastRoad.mPoints.length + j] = queriedPastRoad.mPoints[j];
+                        Log.d("MapRoute, queriedPastRoad.mPoints", j + ": " + queriedPastRoad.mPoints[j].mDescription);
+                        Log.d("MapRoute, queriedPastRoad.mPoints", j + ": " + queriedPastRoad.mPoints[j].mLongitude + " " + queriedPastRoad.mPoints[j].mLatitude);
+                    }
+                    // add current(to) location
+                    newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
+                    newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length].mLongitude = location.getLongitude();
+                    newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length].mLatitude = location.getLatitude();
+                    
                     pastRoad.mPoints = newPoints;
-                    Log.d("pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
-                    Log.d("location", "NEW location");
+                    Log.d("MapRoute, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                    
                 
                     //Setup params 
                     fromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
@@ -188,6 +239,11 @@ public class MapRouteScreen extends MapActivity {
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
                 i_type = getIntent().getStringExtra("i_type");
                
+                Log.d("MapRoute, On Create, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                for (int i = 0; i < pastRoad.mPoints.length; i++) {
+                    Log.d("MapRoute, On Create, pastRoad.mPoints", i + ": " + pastRoad.mPoints[i].mLongitude + " " + pastRoad.mPoints[i].mLatitude);
+                }
+                
                 QueryAndDraw();      		
         		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
@@ -320,7 +376,7 @@ public class MapRouteScreen extends MapActivity {
 		}
 
 
-		public void onBackToMainButtonClick(View view) {
+		public void onBackToGPSInfoButtonClick(View view) {
             // Get LocationManager
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             // Remove the location updates listener
@@ -333,6 +389,9 @@ public class MapRouteScreen extends MapActivity {
             
             // create the Intent object to send BACK to the caller
             Intent i = new Intent();
+            Log.d("MapRouteScreen, toLon", Double.toString(toLon));
+            Log.d("MapRouteScreen, toLat", Double.toString(toLat));
+            Log.d("MapRouteScreen, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
             i.putExtra("toLon", toLon);
             i.putExtra("toLat", toLat);
             // put the pastRoad object into the Intent

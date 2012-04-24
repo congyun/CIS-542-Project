@@ -1,5 +1,7 @@
 package edu.upenn.cis542;
 
+import java.io.InputStream;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,11 @@ public class GPSInfoScreen  extends Activity {
     
     Road pastRoad;
     
+    // params used to query pastRoad
+    private double queriedFromLat, queriedFromLon, queriedToLat, queriedToLon;
+    private RoadProvider.Mode queriedMode;
+    private Road queriedPastRoad;
+    
 	// default initialize params
     //double fromLat = 0; // 39.952881
     //double fromLon = 0; // -75.209437
@@ -40,29 +47,74 @@ public class GPSInfoScreen  extends Activity {
         // Called when a new location is found by the location provider.
         public void onLocationChanged(Location location) {
             Log.d("GPSInfo, locationListener", "onLocationChanged");
-            Log.d("location.getLongitude()", Double.toString(location.getLongitude()));
-            Log.d("location.getLatitude()", Double.toString(location.getLatitude()));
+            Log.d("GPSInfo, location.getLongitude()", Double.toString(location.getLongitude()));
+            Log.d("GPSInfo, location.getLatitude()", Double.toString(location.getLatitude()));
             
             // update pastRoad if it's a new location
             if ((location.getLongitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude) ||
                  (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
-                pastRoad.mEndTime = System.currentTimeMillis();
-                edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + 1];
-                for (int i = 0; i < pastRoad.mPoints.length; i++) {
-                    newPoints[i] = pastRoad.mPoints[i];
-                }
-                newPoints[pastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
-                newPoints[pastRoad.mPoints.length].mLongitude = location.getLongitude();
-                newPoints[pastRoad.mPoints.length].mLatitude = location.getLatitude();
-                pastRoad.mPoints = newPoints;
-                Log.d("pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
-                Log.d("location", "NEW location");
+                Log.d("GPSInfo, location", "NEW location");
+                Log.d("GPSInfo, OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                 
                 // update display
                 TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
                 currentPositionTextView.setText("You are at " + Double.toString(location.getLongitude()) + ", " +Double.toString(location.getLatitude()));
+                
+                pastRoad.mEndTime = System.currentTimeMillis();
+                
+                queriedFromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
+                queriedFromLat = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude;
+                queriedToLon = location.getLongitude();
+                queriedToLat = location.getLatitude();
+                queriedMode = RoadProvider.Mode.WALKING; // TODO: change to default?
+                Log.d("GPSInfo, queriedFromLon", Double.toString(queriedFromLon));
+                Log.d("GPSInfo, queriedFromLat", Double.toString(queriedFromLat));
+                Log.d("GPSInfo, queriedToLon", Double.toString(queriedToLon));
+                Log.d("GPSInfo, queriedToLat", Double.toString(queriedToLat));
+                if (queriedMode == RoadProvider.Mode.WALKING) {
+                    Log.d("GPSInfo, queriedMode", "WALKING");
+                } else if (queriedMode == RoadProvider.Mode.BICYCLING) {
+                    Log.d("GPSInfo, queriedMode", "BICYCLING");
+                } else if (queriedMode == RoadProvider.Mode.DRIVING) {
+                    Log.d("GPSInfo, queriedMode", "DRIVING");
+                }
+
+                Thread rThread = new Thread() {
+                        @Override
+                        public void run() {
+                                String url = RoadProvider.getUrl(queriedFromLat, queriedFromLon, queriedToLat, queriedToLon, queriedMode);
+                                InputStream is = RoadProvider.getConnection(url);
+                                queriedPastRoad = RoadProvider.getRoute(is);
+                        }
+                };
+                rThread.start();
+                try {
+                    rThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                
+                Log.d("GPSInfo, queriedPastRoad.mPoints.length", Integer.toString(queriedPastRoad.mPoints.length));
+                edu.upenn.cis542.route.Point[] newPoints = new edu.upenn.cis542.route.Point[pastRoad.mPoints.length + queriedPastRoad.mPoints.length + 1];
+                // copy old points
+                for (int i = 0; i < pastRoad.mPoints.length; i++) {
+                    newPoints[i] = pastRoad.mPoints[i];
+                }
+                // add queried points on the road, not included from and to points
+                for (int j = 0; j < queriedPastRoad.mPoints.length; j++) {
+                    newPoints[pastRoad.mPoints.length + j] = queriedPastRoad.mPoints[j];
+                    Log.d("GPSInfo, queriedPastRoad.mPoints", j + ": " + queriedPastRoad.mPoints[j].mDescription);
+                    Log.d("GPSInfo, queriedPastRoad.mPoints", j + ": " + queriedPastRoad.mPoints[j].mLongitude + " " + queriedPastRoad.mPoints[j].mLatitude);
+                }
+                // add current(to) location
+                newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length] = new edu.upenn.cis542.route.Point();
+                newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length].mLongitude = location.getLongitude();
+                newPoints[pastRoad.mPoints.length + queriedPastRoad.mPoints.length].mLatitude = location.getLatitude();
+                
+                pastRoad.mPoints = newPoints;
+                Log.d("GPSInfo, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
             } else {
-                Log.d("location", "OLD location");
+                Log.d("GPSInfo, location", "OLD location");
             }
         }
 
@@ -229,6 +281,11 @@ public class GPSInfoScreen  extends Activity {
         
         // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
         pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
+        Log.d("GPSInfo, On Create, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+        for (int i = 0; i < pastRoad.mPoints.length; i++) {
+            Log.d("GPSInfo, On Create, pastRoad.mPoints", i + ": " + pastRoad.mPoints[i].mLongitude + " " + pastRoad.mPoints[i].mLatitude);
+        }
+        
         TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
         Point lastPoint = pastRoad.mPoints[pastRoad.mPoints.length - 1];
         currentPositionTextView.setText("You are at " + Double.toString(lastPoint.mLongitude) + ", " +Double.toString(lastPoint.mLatitude));
@@ -281,15 +338,23 @@ public class GPSInfoScreen  extends Activity {
                 Log.d("GPDInfoScreen", "return from MapRouteScreen");
                 
                 // get updated toLon and toLat, update display
-                toLon = getIntent().getDoubleExtra("toLon", 0.0);
-                toLat = getIntent().getDoubleExtra("toLat", 0.0);
+                toLon = intent.getDoubleExtra("toLon", 0.0);
+                toLat = intent.getDoubleExtra("toLat", 0.0);
+                Log.d("GPDInfo, NEW toLon", Double.toString(toLon));
+                Log.d("GPDInfo, NEW toLat", Double.toString(toLat));
                 TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
                 destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
                 
-                // get pastRoad from the Intent object
-                Log.d("OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                // get pastRoad from the Intent object, update display
+                Log.d("GPDInfo, OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                 pastRoad = (Road) (intent.getExtras().get("pastRoad"));
-                Log.d("NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                Log.d("GPDInfo, NEW pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
+                for (int i = 0; i < pastRoad.mPoints.length; i++) {
+                    Log.d("GPDInfo, NEW pastRoad.mPoints", i + ": " + pastRoad.mPoints[i].mLongitude + " " + pastRoad.mPoints[i].mLatitude);
+                }
+                TextView currentPositionTextView = (TextView)findViewById(R.id.currentPosition);
+                Point lastPoint = pastRoad.mPoints[pastRoad.mPoints.length - 1];
+                currentPositionTextView.setText("You are at " + Double.toString(lastPoint.mLongitude) + ", " +Double.toString(lastPoint.mLatitude));
                 
                 // Get LocationManager
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -321,6 +386,7 @@ public class GPSInfoScreen  extends Activity {
         
         // create the Intent object to send BACK to the caller
         Intent i = new Intent();
+        Log.d("GPSInfoScreen, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
         // put the pastRoad object into the Intent
         i.putExtra("pastRoad", pastRoad);
         setResult(RESULT_OK, i);
