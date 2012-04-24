@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
@@ -15,26 +16,26 @@ import com.google.android.maps.MapView;
 
 public class MapOverlay extends com.google.android.maps.Overlay {
     Road mRoad;
-    PlacesList mList;
     ArrayList<GeoPoint> mPoints;
     Drawable sMarker;
     Drawable dMarker;
-    Drawable iMarker;
     double m_fromLat;
     double m_fromLon;
     double m_toLat;
     double m_toLon;
+    public static int pastRoadColor = Color.DKGRAY;
+    public static int suggestedRoadColor = Color.BLUE;
+    boolean m_isSuggestedRoad;                               //boolean to tell if the route is past or suggested
 
-    public MapOverlay(Road road, PlacesList list, MapView mv, Drawable s_marker, Drawable d_marker, Drawable i_marker, double fromLat, double fromLon, double toLat, double toLon) {
+    public MapOverlay(Road road, MapView mv, Drawable s_marker, Drawable d_marker, double fromLat, double fromLon, double toLat, double toLon, boolean isSuggested) {
             mRoad = road;
-            mList = list;
             sMarker = s_marker;
             dMarker = d_marker;
-            iMarker = i_marker;
             m_fromLat = fromLat;
             m_toLat = toLat;
             m_fromLon = fromLon;
             m_toLon = toLon;
+            m_isSuggestedRoad = isSuggested;
             
             if (road.mRoute.length > 0) {
                     mPoints = new ArrayList<GeoPoint>();
@@ -53,6 +54,27 @@ public class MapOverlay extends com.google.android.maps.Overlay {
                     MapController mapController = mv.getController();
                     mapController.animateTo(moveTo);
                     mapController.setZoom(7);
+            }
+            /*road can also be initialized as a an array of Points, like in the pastRoad*/
+            else if(road.mPoints.length >0)
+            {
+            	mPoints = new ArrayList<GeoPoint>();
+            	for(int i = 0; i < road.mPoints.length; i++)
+            	{
+            		mPoints.add(new GeoPoint((int)(road.mPoints[i].mLatitude * 1000000),
+            				(int)(road.mPoints[i].mLongitude * 1000000)));
+            	}
+            	 int moveToLat = (mPoints.get(0).getLatitudeE6() + (mPoints.get(
+                         mPoints.size() - 1).getLatitudeE6() - mPoints.get(0)
+                         .getLatitudeE6()) / 2);
+            	 int moveToLong = (mPoints.get(0).getLongitudeE6() + (mPoints.get(
+                         mPoints.size() - 1).getLongitudeE6() - mPoints.get(0)
+                         .getLongitudeE6()) / 2);
+            	 GeoPoint moveTo = new GeoPoint(moveToLat, moveToLong);
+
+            	 MapController mapController = mv.getController();
+            	 mapController.animateTo(moveTo);
+            	 mapController.setZoom(7);
             }
     }
 
@@ -86,7 +108,14 @@ public class MapOverlay extends com.google.android.maps.Overlay {
 	public void drawPath(MapView mv, Canvas canvas) {
             int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
             Paint paint = new Paint();
-            paint.setColor(Color.BLUE);
+            if(m_isSuggestedRoad)
+            {
+            	paint.setColor(suggestedRoadColor);
+            }
+            else
+            {
+            	paint.setColor(pastRoadColor);
+            }
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(3);
             for (int i = 0; i < mPoints.size(); i++) {

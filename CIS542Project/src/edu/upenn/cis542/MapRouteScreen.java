@@ -67,10 +67,14 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                     Log.d("location", "NEW location");
                 
-                
-                    // Congyun TODO:
-                    // query? and draw pastRoad and suggestedRoad?
-                    
+                    //Setup params 
+                    fromLon = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude;
+                    fromLat = pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude;
+                    toLon = getIntent().getDoubleExtra("toLon", 0.0);
+                    toLat = getIntent().getDoubleExtra("toLat", 0.0);
+                    mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
+                    i_type = getIntent().getStringExtra("i_type");
+                    QueryAndDraw();
                     
                     
                     // TODO: send updated message to C
@@ -123,15 +127,14 @@ public class MapRouteScreen extends MapActivity {
                         Log.d("MapRoute, readRemoteGPSTask", "Unchanged destination");
                     } else {
                         Log.d("MapRoute, readRemoteGPSTask", "Valid destination");
-                        // new destination location is valid
-                        // congyun TODO:
-                        
-                        
-                        
+                        // new destination location is valid 
                         // update toLon & toLat
                         // these will be passed back to GPSInfoScreen when this close
+                      
+                        //Setup params 
                         toLon = new_toLon;
                         toLat = new_toLat;
+                        QueryAndDraw();
                         
                         // TODO: send updated message to C
                         // Send Message to Device
@@ -184,67 +187,8 @@ public class MapRouteScreen extends MapActivity {
                 toLat = getIntent().getDoubleExtra("toLat", 0.0);
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
                 i_type = getIntent().getStringExtra("i_type");
-                Log.d("MapRoute, fromLon", Double.toString(fromLon));
-                Log.d("MapRoute, fromLat", Double.toString(fromLat));
-                Log.d("MapRoute, toLon", Double.toString(toLon));
-                Log.d("MapRoute, toLat", Double.toString(toLat));
-                if (mode == RoadProvider.Mode.WALKING) {
-                    Log.d("MapRoute, mode", "WALKING");
-                } else if (mode == RoadProvider.Mode.BICYCLING) {
-                    Log.d("MapRoute, mode", "BICYCLING");
-                } else if (mode == RoadProvider.Mode.DRIVING) {
-                    Log.d("MapRoute, mode", "DRIVING");
-                }
-                Log.d("MapRoute, i_type", i_type);
-
-                
-                // Congyun TODO:
-                // query? and draw pastRoad
-                // pastRoad, contains past points coordinates, mStartTime, mEndTime
-                
-                Thread rThread = new Thread() {
-                        @Override
-                        public void run() {
-                                String url = RoadProvider.getUrl(fromLat, fromLon, toLat, toLon,mode);
-                                InputStream is = RoadProvider.getConnection(url);
-                                mRoad = RoadProvider.getRoute(is);
-                                mHandler.sendEmptyMessage(0);
-                        }
-                };
-                rThread.start();
-                try {
-                    rThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                
-                SearchPlaces search = new SearchPlaces();
-                mList = search.getNearByPlaces(fromLat, fromLon, i_type);
-        		
-        		/*trim the result, remove the status tag*/
-        		if(mList.results.get(0).toString().contains("OK"))
-        		{
-        			mList.results.remove(0);
-        		}
-        		Log.v("SearchPlaces", String.valueOf(mList.results.size()));
-        		for(int i = 0; i < mList.results.size(); i++)
-        		{
-        			Log.v("SearchPlaces in Map", mList.results.get(i).toString());
-        		}
-        		
-        		// parse mRoad.mDescription to get roadInfoToC
-        		String[] infos = mRoad.mDescription.split("[ )]");
-        		if (infos.length > 4) {
-        		    // Known description format: "Distance: 1.0mi (about 19 mins)"
-        		    roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
-        		} else {
-        		    // Unknown description format
-        		    roadInfoToC = mRoad.mDescription;
-        		}
-        		
-        		Log.d("mRoad.mDescription", mRoad.mDescription);
-        		Log.d("roadInfoToC", roadInfoToC);
-        		
+               
+                QueryAndDraw();      		
         		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
                 sThread.start();
@@ -265,19 +209,93 @@ public class MapRouteScreen extends MapActivity {
                 Log.d("MapRouteScreen", "Start readRemoteGPSTask");
         }
 
-        // this handle change the description and mapview widgets
+        protected void QueryAndDraw() {
+        	 Log.d("MapRoute, fromLon", Double.toString(fromLon));
+             Log.d("MapRoute, fromLat", Double.toString(fromLat));
+             Log.d("MapRoute, toLon", Double.toString(toLon));
+             Log.d("MapRoute, toLat", Double.toString(toLat));
+             if (mode == RoadProvider.Mode.WALKING) {
+                 Log.d("MapRoute, mode", "WALKING");
+             } else if (mode == RoadProvider.Mode.BICYCLING) {
+                 Log.d("MapRoute, mode", "BICYCLING");
+             } else if (mode == RoadProvider.Mode.DRIVING) {
+                 Log.d("MapRoute, mode", "DRIVING");
+             }
+             Log.d("MapRoute, i_type", i_type);
+
+             Thread rThread = new Thread() {
+                     @Override
+                     public void run() {
+                             String url = RoadProvider.getUrl(fromLat, fromLon, toLat, toLon,mode);
+                             InputStream is = RoadProvider.getConnection(url);
+                             mRoad = RoadProvider.getRoute(is);
+                             mHandler.sendEmptyMessage(0);
+                     }
+             };
+             rThread.start();
+             try {
+                 rThread.join();
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+             
+             SearchPlaces search = new SearchPlaces();
+             mList = search.getNearByPlaces(fromLat, fromLon, i_type);
+     		
+     		/*trim the result, remove the status tag*/
+     		if(mList.results.size()> 0 && mList.results.get(0).toString().contains("OK"))
+     		{
+     			mList.results.remove(0);
+     		}
+     		Log.v("SearchPlaces", String.valueOf(mList.results.size()));
+     		for(int i = 0; i < mList.results.size(); i++)
+     		{
+     			Log.v("SearchPlaces in Map", mList.results.get(i).toString());
+     		}
+     		
+     	// parse mRoad.mDescription to get roadInfoToC
+    		String[] infos = null;
+    		if(mRoad.mDescription!=null)
+    		{
+    			infos = mRoad.mDescription.split("[ )]");
+    			if (infos.length > 4) {
+        		    // Known description format: "Distance: 1.0mi (about 19 mins)"
+        		    roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+        		} else {
+        		    // Unknown description format
+        		    roadInfoToC = mRoad.mDescription;
+        		}
+    			Log.d("mRoad.mDescription", mRoad.mDescription);
+        		Log.d("roadInfoToC", roadInfoToC);
+    		}
+			
+		}
+
+		// this handle change the description and mapview widgets
         Handler mHandler = new Handler() {
                 public void handleMessage(android.os.Message msg) {
                 		/*Set text info*/
                         TextView textView = (TextView) findViewById(R.id.description);
                         textView.setText(mRoad.mName + ", " + mRoad.mDescription);
-                        /*draw route info*/
-                        MapOverlay mapOverlay = new MapOverlay(mRoad, mList,mapView, s_marker,d_marker, i_marker, fromLat, fromLon, toLat,toLon);
+                        /*draw suggested route info*/
+                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, s_marker,d_marker, fromLat, fromLon, toLat,toLon, true);
                         List<Overlay> listOfOverlays = mapView.getOverlays();
                         listOfOverlays.clear();
+                        Log.v("MapRoute OnCreate", "suggestedRoad size: "+ mRoad.mPoints.length);
                         listOfOverlays.add(mapOverlay);
+                        /*draw past route info*/
+                        Log.v("MapRoute OnCreate", "pastRoad size: "+ pastRoad.mPoints.length);
+                        if(pastRoad.mPoints.length > 1)
+                        {
+                        	Log.v("MapRoute OnCreate", "pastRoad size: "+ pastRoad.mPoints.length);
+                        	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView,s_marker,d_marker,
+                        		pastRoad.mPoints[0].mLatitude,pastRoad.mPoints[0].mLongitude,
+                        		pastRoad.mPoints[pastRoad.mPoints.length-1].mLatitude,pastRoad.mPoints[pastRoad.mPoints.length-1].mLongitude,false);
+                        	listOfOverlays.add(pastRoadOverlay);
+                        }
                         /*draw points of interests*/
                         drawPointsofInterest();
+                        /*invalidate map*/
                         mapView.invalidate();
                 };
         };
