@@ -183,6 +183,8 @@ public class GPSInfoScreen  extends Activity {
                     // first time, set to default detination location
                     toLat = 39.952759;
                     toLon = -75.192776;
+                    TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
+                    destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
                     Toast.makeText(getApplicationContext(), "Can not get destination location, using default location", Toast.LENGTH_SHORT).show();
                 }
                 

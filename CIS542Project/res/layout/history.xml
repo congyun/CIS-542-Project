@@ -18,7 +18,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:clickable="true"
-        android:apiKey="0lWSI0iRfPAf4GpiXG1mNlH-O6LhA4ITLbY1Ivw" 
+        android:apiKey="08qH5iLgyU52sI2f9wexFUgY86qM2ITKmOg8qNQ" 
         android:progress="15"/>
 	
 	<Button
