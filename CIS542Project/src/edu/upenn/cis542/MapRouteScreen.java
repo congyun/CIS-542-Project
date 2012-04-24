@@ -32,8 +32,9 @@ public class MapRouteScreen extends MapActivity {
         private MapController mapController;
         private Road mRoad;
         private PlacesList mList;
-        private Drawable s_marker;
-        private Drawable d_marker;
+        private Drawable red_marker;
+        private Drawable blue_marker;
+        private Drawable green_marker;
         private Drawable i_marker;
         
         private String roadInfoToC; // msg will be sent to C program
@@ -217,8 +218,9 @@ public class MapRouteScreen extends MapActivity {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.map_route);
                 mapView = (MapView) findViewById(R.id.mapview);
-                s_marker = getResources().getDrawable(R.drawable.marker_a);
-                d_marker = getResources().getDrawable(R.drawable.marker_b);
+                red_marker = getResources().getDrawable(R.drawable.marker_a);
+                blue_marker = getResources().getDrawable(R.drawable.marker_c);
+                green_marker = getResources().getDrawable(R.drawable.marker_b);
                 i_marker = getResources().getDrawable(R.drawable.heart);
                 mapView.setBuiltInZoomControls(true);
                
@@ -334,7 +336,7 @@ public class MapRouteScreen extends MapActivity {
                         TextView textView = (TextView) findViewById(R.id.description);
                         textView.setText(mRoad.mName + ", " + mRoad.mDescription);
                         /*draw suggested route info*/
-                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, s_marker,d_marker, fromLat, fromLon, toLat,toLon, true);
+                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, blue_marker,green_marker, fromLat, fromLon, toLat,toLon, true);
                         List<Overlay> listOfOverlays = mapView.getOverlays();
                         listOfOverlays.clear();
                         Log.v("MapRoute OnCreate", "suggestedRoad size: "+ mRoad.mPoints.length);
@@ -344,7 +346,7 @@ public class MapRouteScreen extends MapActivity {
                         if(pastRoad.mPoints.length > 1)
                         {
                         	Log.v("MapRoute OnCreate", "pastRoad size: "+ pastRoad.mPoints.length);
-                        	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView,s_marker,d_marker,
+                        	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView, red_marker, blue_marker, 
                         		pastRoad.mPoints[0].mLatitude,pastRoad.mPoints[0].mLongitude,
                         		pastRoad.mPoints[pastRoad.mPoints.length-1].mLatitude,pastRoad.mPoints[pastRoad.mPoints.length-1].mLongitude,false);
                         	listOfOverlays.add(pastRoadOverlay);
