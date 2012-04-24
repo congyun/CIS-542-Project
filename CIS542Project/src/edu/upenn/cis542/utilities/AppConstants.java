@@ -10,6 +10,6 @@ public class AppConstants {
     public static final String DEFAULT_INTEREST_TYPE_INITIAL_VALUE = "Food";
     
     public static final String DEFAULT_ALERT_DISTANCE_KEY = "alert_distance";
-    public static final int DEFAULT_ALERT_DISTANCE_INITIAL_VALUE = 1;
+    public static final float DEFAULT_ALERT_DISTANCE_INITIAL_VALUE = (float) 0.2;
     
 }

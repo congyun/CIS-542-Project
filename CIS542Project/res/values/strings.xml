@@ -20,9 +20,11 @@
 
     <string name="alert_distance_prompt">Choose alter distance</string>
     <string-array name="alert_distance_array">
-        <item>1</item>
+        <item>0.2</item>
+        <item>0.4</item>
+        <item>0.8</item>
+        <item>1.5</item>
         <item>3</item>
-        <item>5</item>
     </string-array>
     
 </resources>

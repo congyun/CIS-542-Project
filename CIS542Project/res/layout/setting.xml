@@ -51,7 +51,7 @@
         android:layout_marginRight="15dp"
         android:text="Alert Distance" />
     
-    <Spinner 
+    <Spinner
         android:id="@+id/alertDistanceSpinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

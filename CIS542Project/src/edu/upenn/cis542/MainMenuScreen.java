@@ -164,12 +164,12 @@ public class MainMenuScreen  extends Activity{
 		    Log.d("MainMenu, defaultInterestValue", defaultInterestValue);
 		}
 		
-		int defaultAlertValue = settings.getInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, -1);
+		float defaultAlertValue = settings.getFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, -1);
 		if (defaultAlertValue == -1) {
-		    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, AppConstants.DEFAULT_ALERT_DISTANCE_INITIAL_VALUE);
-		    Log.d("MainMenu, defaultAlertValue", "No Set, set to " + Integer.toString(AppConstants.DEFAULT_ALERT_DISTANCE_INITIAL_VALUE));
+		    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, AppConstants.DEFAULT_ALERT_DISTANCE_INITIAL_VALUE);
+		    Log.d("MainMenu, defaultAlertValue", "No Set, set to " + Float.toString(AppConstants.DEFAULT_ALERT_DISTANCE_INITIAL_VALUE));
 		} else {
-		    Log.d("MainMenu, alertDefaultValue", Integer.toString(defaultAlertValue));
+		    Log.d("MainMenu, defaultAlertValue", Float.toString(defaultAlertValue));
 		}
 
 		editor.commit();

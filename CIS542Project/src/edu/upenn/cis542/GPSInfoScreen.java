@@ -41,6 +41,7 @@ public class GPSInfoScreen  extends Activity {
     double toLon = 0; // -75.192776
     RoadProvider.Mode mode = RoadProvider.Mode.WALKING; // travel mode
     String i_type = "food"; // points of interests type
+    float alert_distance = (float) 0.2;
     
     // Define a listener that responds to location updates
     LocationListener locationListener = new LocationListener() {
@@ -303,6 +304,58 @@ public class GPSInfoScreen  extends Activity {
             interestSpinner.setSelection(0); // i_type = "food"
         }
         
+        
+        // Define a listener class that responds to alertDistanceSpinner updates
+        class alertDistanceSpinnerOnItemSelectedListener implements OnItemSelectedListener {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selectedItem = parent.getItemAtPosition(pos).toString();
+                if (selectedItem.equals("0.2")) {
+                    alert_distance = (float) 0.2;
+                } else if (selectedItem.equals("0.4")) {
+                    alert_distance = (float) 0.4;
+                } else if (selectedItem.equals("0.8")) {
+                    alert_distance = (float) 0.8;
+                } else if (selectedItem.equals("1.5")) {
+                    alert_distance = (float) 1.5;
+                } else if (selectedItem.equals("3")) {
+                    alert_distance = (float) 3;
+                }
+                Log.d("GPSInfo, , alertDistanceSpinner", selectedItem);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing.
+            }
+        }
+        // initialize alertDistanceSpinner
+        Spinner alertSpinner = (Spinner) findViewById(R.id.alertDistanceSpinner);
+        ArrayAdapter<CharSequence> alertAdapter = ArrayAdapter.createFromResource(
+                this, R.array.alert_distance_array, android.R.layout.simple_spinner_item);
+        alertAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        alertSpinner.setAdapter(alertAdapter);
+        alertSpinner.setOnItemSelectedListener(new alertDistanceSpinnerOnItemSelectedListener());
+        float defaultAlertValue = settings.getFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 0.2);
+        Log.d("GPSInfo, defaultAlertValue", Float.toString(defaultAlertValue)); 
+        if (Math.abs(defaultAlertValue - 0.2) < 0.00001) {
+            Log.d("GPSInfo, defaultAlertValue", "=0.2");
+            alertSpinner.setSelection(0);
+        } else if (Math.abs(defaultAlertValue - 0.4) < 0.00001) {
+            Log.d("GPSInfo, defaultAlertValue", "=0.4");
+            alertSpinner.setSelection(1);
+        } else if (Math.abs(defaultAlertValue - 0.8) < 0.00001) {
+            Log.d("GPSInfo, defaultAlertValue", "=0.8");
+            alertSpinner.setSelection(2);
+        } else if (Math.abs(defaultAlertValue - 1.5) < 0.00001) {
+            Log.d("GPSInfo, defaultAlertValue", "=1.5");
+            alertSpinner.setSelection(3);
+        } else if (Math.abs(defaultAlertValue - 3) < 0.00001) {
+            Log.d("GPSInfo, defaultAlertValue", "=3");
+            alertSpinner.setSelection(4);
+        } else {
+            Log.d("GPSInfo, defaultAlertValue", "= No Match, choose 0.2");
+            alertSpinner.setSelection(0); // alert_distance = 0.2
+        }
+        
         // get pastRoad, contains at least the current position coordinates, mStartTime, mEndTime
         pastRoad = (edu.upenn.cis542.route.Road) getIntent().getExtras().get("pastRoad");
         Log.d("GPSInfo, On Create, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
@@ -350,6 +403,7 @@ public class GPSInfoScreen  extends Activity {
         intent.putExtra("mode", mode);
         intent.putExtra("i_type", i_type);
         intent.putExtra("pastRoad", pastRoad);
+        intent.putExtra("alert_distance", alert_distance);
         startActivityForResult(intent, GPSInfoScreen.ACTIVITY_CreateNewMapRouteScreen);
     }
 

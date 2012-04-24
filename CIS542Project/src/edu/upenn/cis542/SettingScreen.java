@@ -53,6 +53,8 @@ public class SettingScreen  extends Activity{
             travelSpinner.setSelection(1);
         } else if (defaultTravelValue.equals("Driving")) {
             travelSpinner.setSelection(2);
+        } else {
+            travelSpinner.setSelection(0); // "Walking"
         }
 
         // Define a listener class that responds to interestTypeSpinner updates
@@ -88,6 +90,8 @@ public class SettingScreen  extends Activity{
             interestSpinner.setSelection(2);
         } else if (defaultInterestValue.equals("School")) {
             interestSpinner.setSelection(3);
+        } else {
+            interestSpinner.setSelection(0); // "Food"
         }
         
         // Define a listener class that responds to alertDistanceSpinner updates
@@ -97,12 +101,16 @@ public class SettingScreen  extends Activity{
                 
                 SharedPreferences settings = getSharedPreferences(AppConstants.PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
-                if (selectedItem.equals("1")) {
-                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 1);
+                if (selectedItem.equals("0.2")) {
+                    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 0.2);
+                } else if (selectedItem.equals("0.4")) {
+                    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 0.4);
+                } else if (selectedItem.equals("0.8")) {
+                    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 0.8);
+                } else if (selectedItem.equals("1.5")) {
+                    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 1.5);
                 } else if (selectedItem.equals("3")) {
-                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 3);
-                } else if (selectedItem.equals("5")) {
-                    editor.putInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 5);
+                    editor.putFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 3);
                 }
                 editor.commit();
                 Log.d("Setting, alertDistanceSpinner", selectedItem);
@@ -119,14 +127,26 @@ public class SettingScreen  extends Activity{
         alertAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         alertSpinner.setAdapter(alertAdapter);
         alertSpinner.setOnItemSelectedListener(new alertDistanceSpinnerOnItemSelectedListener());
-        int defaultAlertValue = settings.getInt(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, 1);
-        Log.d("Setting, defaultAlertValue", Integer.toString(defaultAlertValue)); 
-        if (defaultAlertValue == 1) {
+        float defaultAlertValue = settings.getFloat(AppConstants.DEFAULT_ALERT_DISTANCE_KEY, (float) 0.2);
+        Log.d("Setting, defaultAlertValue", Float.toString(defaultAlertValue)); 
+        if (Math.abs(defaultAlertValue - 0.2) < 0.00001) {
+            Log.d("Setting, defaultAlertValue", "=0.2");
             alertSpinner.setSelection(0);
-        } else if (defaultAlertValue == 3) {
+        } else if (Math.abs(defaultAlertValue - 0.4) < 0.00001) {
+            Log.d("Setting, defaultAlertValue", "=0.4");
             alertSpinner.setSelection(1);
-        } else if (defaultAlertValue == 5) {
+        } else if (Math.abs(defaultAlertValue - 0.8) < 0.00001) {
+            Log.d("Setting, defaultAlertValue", "=0.8");
             alertSpinner.setSelection(2);
+        } else if (Math.abs(defaultAlertValue - 1.5) < 0.00001) {
+            Log.d("Setting, defaultAlertValue", "=1.5");
+            alertSpinner.setSelection(3);
+        } else if (Math.abs(defaultAlertValue - 3) < 0.00001) {
+            Log.d("Setting, defaultAlertValue", "=3");
+            alertSpinner.setSelection(4);
+        } else {
+            Log.d("Setting, defaultAlertValue", "= Not Match, choose 0.2");
+            alertSpinner.setSelection(0); // "0.2"
         }
 	}
 

@@ -44,6 +44,7 @@ public class MapRouteScreen extends MapActivity {
         private RoadProvider.Mode mode;
         private String i_type;
         Road pastRoad; // contains at least the current position
+        float alert_distance;
 
         // params used to query pastRoad
         private double queriedFromLat, queriedFromLon, queriedToLat, queriedToLon;
@@ -293,7 +294,9 @@ public class MapRouteScreen extends MapActivity {
                 toLat = getIntent().getDoubleExtra("toLat", 0.0);
                 mode = (edu.upenn.cis542.route.RoadProvider.Mode) getIntent().getExtras().get("mode");
                 i_type = getIntent().getStringExtra("i_type");
-               
+                alert_distance = getIntent().getFloatExtra("alert_distance", (float) 0.2);
+                Log.d("MapRoute, On Create, alert_distance", Float.toString(alert_distance));
+                
                 Log.d("MapRoute, On Create, pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                 for (int i = 0; i < pastRoad.mPoints.length; i++) {
                     Log.d("MapRoute, On Create, pastRoad.mPoints", i + ": " + pastRoad.mPoints[i].mLongitude + " " + pastRoad.mPoints[i].mLatitude);
