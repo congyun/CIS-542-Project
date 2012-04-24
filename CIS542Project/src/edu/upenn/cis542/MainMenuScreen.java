@@ -193,12 +193,12 @@ public class MainMenuScreen  extends Activity{
             Log.d("MainMenu, onCreate", "lastKnownLocation is OK");
             Log.d("lastKnownLocation.getLongitude()", Double.toString(lastKnownLocation.getLongitude()));
             Log.d("lastKnownLocation.getLatitude()", Double.toString(lastKnownLocation.getLatitude()));
-            pastRoad.mPoints[0].mLongitude = lastKnownLocation.getLongitude();
             pastRoad.mPoints[0].mLatitude = lastKnownLocation.getLatitude();
+            pastRoad.mPoints[0].mLongitude = lastKnownLocation.getLongitude();
         } else {
             Log.e("MainMenu, onCreate", "lastKnownLocation is NULL");
-            pastRoad.mPoints[0].mLongitude = -75.209437;
-            pastRoad.mPoints[0].mLatitude = 39.952881;
+            pastRoad.mPoints[0].mLatitude = AppConstants.DEFAULT_FROM_LAT;
+            pastRoad.mPoints[0].mLongitude = AppConstants.DEFAULT_FROM_LON;
             Toast.makeText(getApplicationContext(), "Can not get your GPS location, using default start location", Toast.LENGTH_LONG).show();            
         }
         Log.d("pastRoad.mPoints[0].mLatitude", Double.toString(pastRoad.mPoints[0].mLatitude));

@@ -35,10 +35,8 @@ public class GPSInfoScreen  extends Activity {
     private Road queriedPastRoad;
     
 	// default initialize params
-    //double fromLat = 0; // 39.952881
-    //double fromLon = 0; // -75.209437
-    double toLat = 0; // 39.952759
-    double toLon = 0; // -75.192776
+    double toLat = 0; // AppConstants.DEFAULT_TO_LAT
+    double toLon = 0; // AppConstants.DEFAULT_TO_LON
     RoadProvider.Mode mode = RoadProvider.Mode.WALKING; // travel mode
     String i_type = "food"; // points of interests type
     float alert_distance = (float) 0.2;
@@ -182,8 +180,8 @@ public class GPSInfoScreen  extends Activity {
                     destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
                 } else if ((toLat == 0) && (toLon == 0)) {
                     // first time, set to default detination location
-                    toLat = 39.952759;
-                    toLon = -75.192776;
+                    toLat = AppConstants.DEFAULT_TO_LAT;
+                    toLon = AppConstants.DEFAULT_TO_LON;
                     TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
                     destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
                     Toast.makeText(getApplicationContext(), "Can not get destination location, using default location", Toast.LENGTH_SHORT).show();
@@ -199,8 +197,8 @@ public class GPSInfoScreen  extends Activity {
                 
                 if ((toLat == 0) && (toLon == 0)) {
                     // first time, set to default detination location
-                    toLat = 39.952759;
-                    toLon = -75.192776;
+                    toLat = AppConstants.DEFAULT_TO_LAT;
+                    toLon = AppConstants.DEFAULT_TO_LON;
                     TextView destinationPositionTextView = (TextView)findViewById(R.id.destinationPosition);
                     destinationPositionTextView.setText("Your destination is " + Double.toString(toLon) + ", " + Double.toString(toLat));
 
@@ -396,8 +394,6 @@ public class GPSInfoScreen  extends Activity {
         
         
         Intent intent = new Intent(this, MapRouteScreen.class);
-        //intent.putExtra("fromLon", fromLon);
-        //intent.putExtra("fromLat", fromLat);
         intent.putExtra("toLon", toLon);
         intent.putExtra("toLat", toLat);
         intent.putExtra("mode", mode);
