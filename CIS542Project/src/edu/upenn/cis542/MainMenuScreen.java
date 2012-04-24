@@ -300,10 +300,57 @@ public class MainMenuScreen  extends Activity{
 		editor.remove("logged");
 		editor.commit();
 		
-		// Yufei TODO: 
-		// store a pastRoad object into database
-		
-		
-		finish();
-	}
-}
+		// Yufei:
+				// if number of points in pastRoad is bigger than 1, store a pastRoad
+				// object into database
+
+				// dummy pastRoad:
+			/*	Point point0 = new Point();
+				Point point1 = new Point();
+				Point point2 = new Point();
+				Point point3 = new Point();
+
+				point1.mLatitude = 39.9543680;
+				point1.mLongitude = -75.2029830;
+				point2.mLatitude = 39.9560470;
+				point2.mLongitude = -75.2020340;
+				point0.mLatitude = 39.9527660;
+				point0.mLongitude = -75.2103180;
+				point3.mLatitude = 39.9540160;
+				point3.mLongitude = -75.2008730;
+				
+				pastRoad.mPoints = new Point[4];
+				pastRoad.mPoints[0] = point0;
+				pastRoad.mPoints[1] = point1;
+				pastRoad.mPoints[2] = point2;
+				pastRoad.mPoints[3] = point3;
+				pastRoad.mStartTime = System.currentTimeMillis();
+				pastRoad.mEndTime = pastRoad.mStartTime + 200;*/
+
+				if (pastRoad.mPoints.length > 1) {
+
+					// store it to a new entry in table
+					DatabaseHelper dbHelper = new DatabaseHelper(this);
+
+					Log.d("Insert: ", "Inserting ..");
+					String pointInfo = "";
+					for (int i = 0; i < pastRoad.mPoints.length; i++) {
+						pointInfo += pastRoad.mPoints[i].mLatitude;
+						pointInfo += ",";
+						pointInfo += pastRoad.mPoints[i].mLongitude;
+						pointInfo += ",";
+					}
+					
+					if (pastRoad.mStartName == "")
+						pastRoad.mStartName = "Unknown Place";
+					if (pastRoad.mEndName == "")
+						pastRoad.mEndName = "Unknown Place";
+					dbHelper.insertRecord(String.valueOf(pastRoad.mStartTime),String.valueOf(pastRoad.mEndTime),pastRoad.mStartName, pastRoad.mEndName, pointInfo);
+					Log.d("Insert: ", "Record Inserted." + pointInfo);
+				}
+
+				finish();
+
+			}
+		}
+

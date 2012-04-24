@@ -20,6 +20,7 @@ import edu.upenn.cis542.route.Road;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -28,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class HistoryScreen extends MapActivity {
 
@@ -59,18 +61,21 @@ public class HistoryScreen extends MapActivity {
 		historyRoadList = new ArrayList<Road>(); // changed
 		// Select All Query
 		Cursor cursor = dbHelper.getAllRecords();
-
 		if (cursor.moveToFirst()) {
 			do {
 				Road newRoad = new Road();
 				newRoad.mStartTime = Long.parseLong(cursor.getString(1));
-				String pointsInfo = cursor.getString(2);
+				newRoad.mEndTime = Long.parseLong(cursor.getString(2));
+				newRoad.mStartName = cursor.getString(3);
+				newRoad.mEndName = cursor.getString(4);
+				String pointsInfo = cursor.getString(5);
 				newRoad.mPoints = parsePoint(pointsInfo);
 				historyRoadList.add(newRoad);
 				Log.d("debug", "added a road.");//
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
+		Log.d("cursor:",String.valueOf(cursor.isClosed()));
 		dbHelper.close();
 
 		// if list not empty ?need to determine?
@@ -89,7 +94,6 @@ public class HistoryScreen extends MapActivity {
 		mapView = (MapView) findViewById(R.id.historymapview);
 		s_marker = getResources().getDrawable(R.drawable.marker_a);
 		d_marker = getResources().getDrawable(R.drawable.marker_b);
-		// i_marker = getResources().getDrawable(R.drawable.heart);
 		mapView.setBuiltInZoomControls(true);
 
 		mapView.setSatellite(false);
@@ -107,7 +111,7 @@ public class HistoryScreen extends MapActivity {
 				.setTitle("Travel Record, please select:")
 				.setMultiChoiceItems(_options, _selections,
 						new DialogSelectionClickHandler())
-				.setPositiveButton("OK", new DialogButtonClickHandler())
+				.setPositiveButton("Show Selected", new DialogButtonClickHandler())
 				.setNegativeButton("Delete Selected",
 						new DialogButtonClickHandler()).create();
 	}
@@ -127,7 +131,17 @@ public class HistoryScreen extends MapActivity {
 		public void onClick(DialogInterface dialog, int clicked) {
 			switch (clicked) {
 			case DialogInterface.BUTTON_POSITIVE:
-				printSelectedRoads();
+				int selectedRouteCount = 0;
+				for(int i=0; i<_options.length; i++){
+					if(_selections[i] == true)
+						selectedRouteCount++;
+				}
+				if(selectedRouteCount > 5){
+					Context context = getApplicationContext();
+					Toast.makeText(context,"Please select no more than 5 routes to display!", Toast.LENGTH_LONG).show();
+				}
+				else
+					printSelectedRoads();
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
 				deleteSelectedRoads();
@@ -137,8 +151,10 @@ public class HistoryScreen extends MapActivity {
 	}
 
 	protected void printSelectedRoads() {
+		int routeCount = 0;
 		for (int i = 0; i < _options.length; i++) {
 			Log.i("ME", _options[i] + " selected: " + _selections[i]);
+			
 			if (_selections[i] == true) {
 				Road road = (Road) historyRoadList.get(i);
 				double fromLon = road.mPoints[0].mLongitude;
@@ -146,9 +162,10 @@ public class HistoryScreen extends MapActivity {
 				double toLon = road.mPoints[road.mPoints.length - 1].mLongitude;
 				double toLat = road.mPoints[road.mPoints.length - 1].mLatitude;
 				//Log.d("MapPoint", "Points: " + road.mPoints.length);
-				MapOverlay mapOverlay = new MapOverlay(road, mapView, s_marker, d_marker, fromLat, fromLon, toLat, toLon,true);
+				MapOverlay mapOverlay = new MapOverlay(road, mapView, s_marker, d_marker, fromLat, fromLon, toLat, toLon,routeCount);
 				listOfOverlays.add(mapOverlay);
 				Log.d("MapRoute", "Added road size: " + road.mPoints.length);
+				routeCount++;
 			}
 		}
 		
@@ -162,7 +179,7 @@ public class HistoryScreen extends MapActivity {
 		for (int i = 0; i < _options.length; i++) {
 
 			if (_selections[i] == true) {
-				dbHelper.deleteContact(i);
+				dbHelper.deleteRecord(i);
 			}
 			Log.d("debug", "road deleted from DB.");//
 		}
@@ -210,11 +227,14 @@ public class HistoryScreen extends MapActivity {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(road.mStartTime);
 		roadInfo = formatter.format(calendar.getTime()) + "\n"; // "Time:" +
-		roadInfo = roadInfo + "From:" + road.mPoints[0].mLatitude + ","
-				+ road.mPoints[0].mLongitude + "\n";
+
+		roadInfo = roadInfo + "From:" + String.format("%.2f",road.mPoints[0].mLatitude) + ","
+				+ String.format("%.2f",road.mPoints[0].mLongitude) + "\n"
+				+ road.mStartName + "\n";
 		int end = road.mPoints.length - 1;
-		roadInfo = roadInfo + "To:" + road.mPoints[end].mLatitude + ","
-				+ road.mPoints[end].mLongitude;
+		roadInfo = roadInfo + "To:" + String.format("%.2f",road.mPoints[end].mLatitude) + ","
+				+ String.format("%.2f",road.mPoints[end].mLongitude) + "\n"
+				+ road.mEndName;
 
 		return roadInfo;
 	}
