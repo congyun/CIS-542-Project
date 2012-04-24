@@ -25,9 +25,10 @@ public class MapOverlay extends com.google.android.maps.Overlay {
     double m_toLon;
     public static int pastRoadColor = Color.DKGRAY;
     public static int suggestedRoadColor = Color.BLUE;
-    boolean m_isSuggestedRoad;                               //boolean to tell if the route is past or suggested
+    int m_colorCode;               //color to draw the route
+    int [] colors = {Color.BLUE, Color.GRAY, Color.RED,Color.CYAN, Color.GREEN, Color.YELLOW};
 
-    public MapOverlay(Road road, MapView mv, Drawable s_marker, Drawable d_marker, double fromLat, double fromLon, double toLat, double toLon, boolean isSuggested) {
+    public MapOverlay(Road road, MapView mv, Drawable s_marker, Drawable d_marker, double fromLat, double fromLon, double toLat, double toLon, int colorCode) {
             mRoad = road;
             sMarker = s_marker;
             dMarker = d_marker;
@@ -35,10 +36,10 @@ public class MapOverlay extends com.google.android.maps.Overlay {
             m_toLat = toLat;
             m_fromLon = fromLon;
             m_toLon = toLon;
-            m_isSuggestedRoad = isSuggested;
+            m_colorCode = colorCode;
             
-            if (road.mRoute.length > 0) {
-                    mPoints = new ArrayList<GeoPoint>();
+            mPoints = new ArrayList<GeoPoint>();
+            if (road.mRoute.length > 0) {           
                     for (int i = 0; i < road.mRoute.length; i++) {
                             mPoints.add(new GeoPoint((int) (road.mRoute[i][1] * 1000000),
                                             (int) (road.mRoute[i][0] * 1000000)));
@@ -108,14 +109,7 @@ public class MapOverlay extends com.google.android.maps.Overlay {
 	public void drawPath(MapView mv, Canvas canvas) {
             int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
             Paint paint = new Paint();
-            if(m_isSuggestedRoad)
-            {
-            	paint.setColor(suggestedRoadColor);
-            }
-            else
-            {
-            	paint.setColor(pastRoadColor);
-            }
+            paint.setColor(colors[m_colorCode]);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(3);
             for (int i = 0; i < mPoints.size(); i++) {

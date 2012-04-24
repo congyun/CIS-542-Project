@@ -13,4 +13,6 @@ public class Road implements Serializable {
     public Point[] mPoints = new Point[] {};
     public long mStartTime = 0; // get by System.currentTimeMillis();
     public long mEndTime = 0;   // get by System.currentTimeMillis();
+    public String mStartName;
+    public String mEndName;
 }

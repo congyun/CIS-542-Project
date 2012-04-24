@@ -15,6 +15,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.util.Log;
+
 public class RoadProvider {
 	public enum Mode {
 		DRIVING,
@@ -37,6 +39,7 @@ public class RoadProvider {
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
+                //Log.d("getRoute", handler.mRoad.mPoints[handler.mRoad.mPoints.length-1].mLatitude+" "+handler.mRoad.mPoints[handler.mRoad.mPoints.length-1].mLongitude);
                 return handler.mRoad;
         }
 
@@ -94,7 +97,7 @@ class KMLHandler extends DefaultHandler {
                 mCurrentElement.push(localName);
                 if (localName.equalsIgnoreCase("Placemark")) {
                         isPlacemark = true;
-                        mRoad.mPoints = addPoint(mRoad.mPoints);
+                        //mRoad.mPoints = addPoint(mRoad.mPoints); // new commented
                 } else if (localName.equalsIgnoreCase("ItemIcon")) {
                         if (isPlacemark)
                                 isItemIcon = true;
@@ -115,6 +118,7 @@ class KMLHandler extends DefaultHandler {
                                 if (isPlacemark) {
                                         isRoute = mString.equalsIgnoreCase("Route");
                                         if (!isRoute) {
+                                                mRoad.mPoints = addPoint(mRoad.mPoints); // new added
                                                 mRoad.mPoints[mRoad.mPoints.length - 1].mName = mString;
                                         }
                                 } else {
