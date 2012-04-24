@@ -130,9 +130,24 @@ public class MapRouteScreen extends MapActivity {
                     
                     
                     // TODO: send updated message to C
+                    // parse mRoad.mDescription to get roadInfoToC
+                    String[] infos = null;
+                    if(mRoad.mDescription!=null)
+                    {
+                        infos = mRoad.mDescription.split("[ )]");
+                        if (infos.length > 4) {
+                            // Known description format: "Distance: 1.0mi (about 19 mins)"
+                            roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                        } else {
+                            // Unknown description format
+                            roadInfoToC = mRoad.mDescription;
+                        }
+                        Log.d("mRoad.mDescription", mRoad.mDescription);
+                        Log.d("roadInfoToC", roadInfoToC);
+                    }
                     // Send Message to Device
-                    //Thread sThread = new Thread(new SendThread());
-                    //sThread.start();
+                    Thread sThread = new Thread(new SendThread());
+                    sThread.start();
                 } else {
                     Log.d("location", "OLD location");
                 }
@@ -189,9 +204,24 @@ public class MapRouteScreen extends MapActivity {
                         QueryAndDraw();
                         
                         // TODO: send updated message to C
+                        // parse mRoad.mDescription to get roadInfoToC
+                        String[] infos = null;
+                        if(mRoad.mDescription!=null)
+                        {
+                            infos = mRoad.mDescription.split("[ )]");
+                            if (infos.length > 4) {
+                                // Known description format: "Distance: 1.0mi (about 19 mins)"
+                                roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                            } else {
+                                // Unknown description format
+                                roadInfoToC = mRoad.mDescription;
+                            }
+                            Log.d("mRoad.mDescription", mRoad.mDescription);
+                            Log.d("roadInfoToC", roadInfoToC);
+                        }
                         // Send Message to Device
-                        //Thread sThread = new Thread(new SendThread());
-                        //sThread.start();
+                        Thread sThread = new Thread(new SendThread());
+                        sThread.start();
                     }
                     
                     Log.d("MapRoute, readRemoteGPSTask", "Finished");
@@ -246,7 +276,24 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, On Create, pastRoad.mPoints", i + ": " + pastRoad.mPoints[i].mLongitude + " " + pastRoad.mPoints[i].mLatitude);
                 }
                 
-                QueryAndDraw();      		
+                QueryAndDraw();
+
+                
+                // parse mRoad.mDescription to get roadInfoToC
+                String[] infos = null;
+                if(mRoad.mDescription!=null)
+                {
+                    infos = mRoad.mDescription.split("[ )]");
+                    if (infos.length > 4) {
+                        // Known description format: "Distance: 1.0mi (about 19 mins)"
+                        roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
+                    } else {
+                        // Unknown description format
+                        roadInfoToC = mRoad.mDescription;
+                    }
+                    Log.d("mRoad.mDescription", mRoad.mDescription);
+                    Log.d("roadInfoToC", roadInfoToC);
+                }
         		// Send Message to Device
         	    Thread sThread = new Thread(new SendThread());
                 sThread.start();
@@ -310,23 +357,6 @@ public class MapRouteScreen extends MapActivity {
      		{
      			Log.v("SearchPlaces in Map", mList.results.get(i).toString());
      		}
-     		
-     		// parse mRoad.mDescription to get roadInfoToC
-    		String[] infos = null;
-    		if(mRoad.mDescription!=null)
-    		{
-    			infos = mRoad.mDescription.split("[ )]");
-    			if (infos.length > 4) {
-        		    // Known description format: "Distance: 1.0mi (about 19 mins)"
-        		    roadInfoToC = infos[1] + "," + infos[3] + " " + infos[4];
-        		} else {
-        		    // Unknown description format
-        		    roadInfoToC = mRoad.mDescription;
-        		}
-    			Log.d("mRoad.mDescription", mRoad.mDescription);
-        		Log.d("roadInfoToC", roadInfoToC);
-    		}
-			
 		}
 
 		// this handle change the description and mapview widgets
