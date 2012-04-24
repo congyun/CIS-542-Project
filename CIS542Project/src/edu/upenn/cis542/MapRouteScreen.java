@@ -32,7 +32,7 @@ public class MapRouteScreen extends MapActivity {
         private MapController mapController;
         private Road mRoad;
         private PlacesList mList;
-        private Drawable red_marker;
+        private Drawable orange_marker;
         private Drawable blue_marker;
         private Drawable green_marker;
         private Drawable i_marker;
@@ -272,7 +272,7 @@ public class MapRouteScreen extends MapActivity {
                 //red_marker = getResources().getDrawable(R.drawable.marker_a);
                 //blue_marker = getResources().getDrawable(R.drawable.marker_c);
                 //green_marker = getResources().getDrawable(R.drawable.marker_b);
-                red_marker = getResources().getDrawable(R.drawable.orange_marker);
+                orange_marker = getResources().getDrawable(R.drawable.orange_marker);
                 blue_marker = getResources().getDrawable(R.drawable.blue_marker);
                 green_marker = getResources().getDrawable(R.drawable.green_marker);
                 i_marker = getResources().getDrawable(R.drawable.heart);
@@ -400,7 +400,7 @@ public class MapRouteScreen extends MapActivity {
                         if(pastRoad.mPoints.length > 1)
                         {
                         	Log.v("MapRoute OnCreate", "pastRoad size: "+ pastRoad.mPoints.length);
-                        	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView, red_marker, blue_marker, 
+                        	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView, orange_marker, blue_marker, 
                         		pastRoad.mPoints[0].mLatitude,pastRoad.mPoints[0].mLongitude,
                         		pastRoad.mPoints[pastRoad.mPoints.length-1].mLatitude,pastRoad.mPoints[pastRoad.mPoints.length-1].mLongitude,1);
                         	listOfOverlays.add(pastRoadOverlay);
