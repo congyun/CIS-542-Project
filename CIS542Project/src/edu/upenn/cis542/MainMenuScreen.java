@@ -158,6 +158,8 @@ public class MainMenuScreen  extends Activity{
 		pastRoad.mEndTime = pastRoad.mStartTime;
 		pastRoad.mPoints = new Point[1];
         pastRoad.mPoints[0] = new Point();
+        pastRoad.mStartName = "";
+        pastRoad.mEndName = "";
         
 		// Get LocationManager
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
