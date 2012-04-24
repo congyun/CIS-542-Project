@@ -190,7 +190,7 @@ public class MapRouteScreen extends MapActivity {
         
         // readRemoteGPS related values
         private Handler readRemoteGPSHandler = new Handler();
-        private static final int UPDATE_INTERVAL = 3000;
+        private static final int UPDATE_INTERVAL = 5000;
         private boolean whetherUpdate = true; // for testing, whether the coordinates are updated periodically or not
         private Runnable readRemoteGPSTask = new Runnable() {
             public void run() {
@@ -209,7 +209,6 @@ public class MapRouteScreen extends MapActivity {
                     Log.d("MapRoute, new_toLat", Double.toString(new_toLat));
                     
                     if ((new_toLat == 0) && (new_toLon == 0)) {
-                        Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
                         Log.d("MapRoute, readRemoteGPSTask", "Invalid destination");
                     } else if ((new_toLon == toLon) && (new_toLat == toLat)) {
                         Log.d("MapRoute, readRemoteGPSTask", "Unchanged destination");
@@ -253,7 +252,7 @@ public class MapRouteScreen extends MapActivity {
                 } catch (Exception e) {
                     Log.e("MapRoute, readRemoteGPSTask", "Exception");
                     
-                    Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connection lost, using last known location", Toast.LENGTH_SHORT).show();
                     
                     if (whetherUpdate) {
                         // wait longer time to update if got exception

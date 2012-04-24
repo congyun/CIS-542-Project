@@ -155,7 +155,7 @@ public class GPSInfoScreen  extends Activity {
     
     // readRemoteGPS related values
     private Handler readRemoteGPSHandler = new Handler();
-    private static final int UPDATE_INTERVAL = 3000;
+    private static final int UPDATE_INTERVAL = 5000;
     private boolean whetherUpdate = true; // for testing, whether the coordinates are updated periodically or not
     private Runnable readRemoteGPSTask = new Runnable() {
         public void run() {
@@ -205,7 +205,7 @@ public class GPSInfoScreen  extends Activity {
 
                     Toast.makeText(getApplicationContext(), "Can not get destination location, using default location", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Can not get updated destination location, using last known location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connection lost, using last known location", Toast.LENGTH_SHORT).show();
                 }
                 
                 if (whetherUpdate) {
