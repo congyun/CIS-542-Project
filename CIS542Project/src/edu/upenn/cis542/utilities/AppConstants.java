@@ -39,6 +39,16 @@ public class AppConstants {
     <lat>39.9543680</lat>
     <lng>-75.2029830</lng>
     
+    <name>Bobby's Burger Palace</name>
+    <vicinity>3925 Walnut Street, Philadelphia</vicinity>
+    <lat>39.9540160</lat>
+    <lng>-75.2008730</lng>
+
+    <name>Distrito Restaurant</name>
+    <vicinity>3945 Chestnut Street, Philadelphia</vicinity>
+    <lat>39.9560470</lat>
+    <lng>-75.2020340</lng>
+    
     <name>Abner's of University City</name>
     <vicinity>38 and Chestnut Streets, Philadelphia</vicinity>
     <lat>39.9552910</lat>
