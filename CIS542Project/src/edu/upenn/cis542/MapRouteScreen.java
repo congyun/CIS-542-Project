@@ -336,7 +336,7 @@ public class MapRouteScreen extends MapActivity {
                         TextView textView = (TextView) findViewById(R.id.description);
                         textView.setText(mRoad.mName + ", " + mRoad.mDescription);
                         /*draw suggested route info*/
-                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, blue_marker,green_marker, fromLat, fromLon, toLat,toLon, true);
+                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, blue_marker, green_marker, fromLat, fromLon, toLat,toLon, true);
                         List<Overlay> listOfOverlays = mapView.getOverlays();
                         listOfOverlays.clear();
                         Log.v("MapRoute OnCreate", "suggestedRoad size: "+ mRoad.mPoints.length);
