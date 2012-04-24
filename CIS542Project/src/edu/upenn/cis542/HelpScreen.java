@@ -18,7 +18,7 @@ public class HelpScreen  extends Activity{
 		                    + "Congyun Gu (congyun@seas.upenn.edu)\n"
 		                    + "Siyin Gu (gusiyin@seas.upenn.edu)\n"
 		                    + "Yue Ning (yning@seas.upenn.edu)\n"
-		                    + "Yufei Wang (wangyufei2009@gmail.com)\n\n"
+		                    + "Yufei Wang (yufeiw@seas.upenn.edu)\n\n"
 		                    + "Please contact us if you have any problem.";
         infoTextView.setText(infoString);
 	}

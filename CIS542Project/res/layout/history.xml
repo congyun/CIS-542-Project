@@ -12,8 +12,17 @@
 	    android:layout_margin="10dp"
 		android:text="This is History Screen" />
 
+	<com.google.android.maps.MapView
+        android:id="@+id/historymapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:apiKey="0lWSI0iRfPAf4GpiXG1mNlH-O6LhA4ITLbY1Ivw" 
+        android:progress="15"/>
+	
 	<Button
-	    android:layout_width="match_parent"
+	    android:layout_width="fill_parent"
 	    android:layout_height="40dp"
 		android:layout_marginLeft="10dp"
 		android:layout_marginRight="10dp"
