@@ -128,7 +128,7 @@ public class MapRouteScreen extends MapActivity {
                         Log.d("MapRoute, OLD pastRoad.mEndName", "="+pastRoad.mEndName);
                         nameInfos = queriedPastRoad.mName.split("to");
                         if (nameInfos.length > 1) {
-                            // Known name format: "XXXX to XXX"
+                            // Known name format: "XXXX to XXXX"
                             if (pastRoad.mStartName.equals("")) {
                                 // first time, set mStartName
                                 pastRoad.mStartName = nameInfos[0].trim();
@@ -151,8 +151,8 @@ public class MapRouteScreen extends MapActivity {
                     QueryAndDraw();
                     
                     
-                    // TODO: send updated message to C
                     // parse mRoad.mDescription to get roadInfoToC
+                    // get estimated distance and display alert if estimated distance is less than alert distance
                     String[] descriptionInfos = null;
                     if(mRoad.mDescription!=null)
                     {
@@ -160,6 +160,17 @@ public class MapRouteScreen extends MapActivity {
                         if (descriptionInfos.length > 4) {
                             // Known description format: "Distance: 1.0mi (about 19 mins)"
                             roadInfoToC = descriptionInfos[1] + "," + descriptionInfos[3] + " " + descriptionInfos[4];
+                            
+                            // get estimated distance and display alert if estimated distance is less than alert distance
+                            String actual_distance_string = descriptionInfos[1].substring(0, descriptionInfos[1].length()-2);
+                            Log.d("actual_distance_string", "="+actual_distance_string);
+                            try {
+                                float actual_distance = Float.valueOf(actual_distance_string.trim()).floatValue();
+                                Log.d("actual_distance", "="+actual_distance);
+                                if (actual_distance < alert_distance) {
+                                    Toast.makeText(getApplicationContext(), "Your distance to destination is less than " + alert_distance + "miles", Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (Exception e) { }
                         } else {
                             // Unknown description format
                             roadInfoToC = mRoad.mDescription;
@@ -224,15 +235,27 @@ public class MapRouteScreen extends MapActivity {
                         toLat = new_toLat;
                         QueryAndDraw();
                         
-                        // TODO: send updated message to C
+
                         // parse mRoad.mDescription to get roadInfoToC
-                        String[] decriptionInfos = null;
+                        // get estimated distance and display alert if estimated distance is less than alert distance
+                        String[] descriptionInfos = null;
                         if(mRoad.mDescription!=null)
                         {
-                            decriptionInfos = mRoad.mDescription.split("[ )]");
-                            if (decriptionInfos.length > 4) {
+                            descriptionInfos = mRoad.mDescription.split("[ )]");
+                            if (descriptionInfos.length > 4) {
                                 // Known description format: "Distance: 1.0mi (about 19 mins)"
-                                roadInfoToC = decriptionInfos[1] + "," + decriptionInfos[3] + " " + decriptionInfos[4];
+                                roadInfoToC = descriptionInfos[1] + "," + descriptionInfos[3] + " " + descriptionInfos[4];
+                                
+                                 // get estimated distance and display alert if estimated distance is less than alert distance
+                                String actual_distance_string = descriptionInfos[1].substring(0, descriptionInfos[1].length()-2);
+                                Log.d("actual_distance_string", "="+actual_distance_string);
+                                try {
+                                    float actual_distance = Float.valueOf(actual_distance_string.trim()).floatValue();
+                                    Log.d("actual_distance", "="+actual_distance);
+                                    if (actual_distance < alert_distance) {
+                                        Toast.makeText(getApplicationContext(), "Your distance to destination is less than " + alert_distance + "miles", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception e) { }
                             } else {
                                 // Unknown description format
                                 roadInfoToC = mRoad.mDescription;
@@ -306,6 +329,7 @@ public class MapRouteScreen extends MapActivity {
 
                 
                 // parse mRoad.mDescription to get roadInfoToC
+                // get estimated distance and display alert if estimated distance is less than alert distance
                 String[] descriptionInfos = null;
                 if(mRoad.mDescription!=null)
                 {
@@ -313,6 +337,17 @@ public class MapRouteScreen extends MapActivity {
                     if (descriptionInfos.length > 4) {
                         // Known description format: "Distance: 1.0mi (about 19 mins)"
                         roadInfoToC = descriptionInfos[1] + "," + descriptionInfos[3] + " " + descriptionInfos[4];
+                        
+                        // get estimated distance and display alert if estimated distance is less than alert distance
+                        String actual_distance_string = descriptionInfos[1].substring(0, descriptionInfos[1].length()-2);
+                        Log.d("actual_distance_string", "="+actual_distance_string);
+                        try {
+                            float actual_distance = Float.valueOf(actual_distance_string.trim()).floatValue();
+                            Log.d("actual_distance", "="+actual_distance);
+                            if (actual_distance < alert_distance) {
+                                Toast.makeText(getApplicationContext(), "Your distance to destination is less than " + alert_distance + "miles", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) { }
                     } else {
                         // Unknown description format
                         roadInfoToC = mRoad.mDescription;

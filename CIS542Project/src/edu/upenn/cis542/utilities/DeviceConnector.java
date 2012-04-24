@@ -8,7 +8,7 @@ import android.util.Log;
 public class DeviceConnector {    
     private String serverAddr = "158.130.103.51";
     private int serverPort = 19108;
-    private int timeOut = 1000; // socket timeout in milliseconds
+    private int timeOut = 3000; // socket timeout in milliseconds
     public long latitude = 0;
     public long longitude = 0;
     public boolean isPositiveLat = true;
@@ -54,6 +54,7 @@ public class DeviceConnector {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             out.println("GPSDATA\0");
+            Log.d("readData", "sent \"GPSDATA\"");
             String msg = in.readLine();
             Log.d("readData", "msg:" + msg);
             
@@ -65,7 +66,7 @@ public class DeviceConnector {
                 this.isPositiveLong = true;
                 this.longitude = 0;
             }
-        
+            
             out.close();
             in.close();
             socket.close();
@@ -108,7 +109,9 @@ public class DeviceConnector {
             
        		out = new PrintWriter(socket.getOutputStream(), true);            
             out.println("MESSAGE\0");
+            Log.d("readData", "sent \"MESSAGE\"");
             out.println(msg+"\0");
+            Log.d("readData", "sent msg=" + msg);
         
             out.close();
             socket.close();
