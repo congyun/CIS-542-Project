@@ -365,6 +365,8 @@ public class MapRouteScreen extends MapActivity {
         protected void drawPointsofInterest() {
 			PointsOverlay pointsPos = new PointsOverlay(i_marker, mapView);
 		    List<Overlay> overlays = mapView.getOverlays();
+		    GeoPoint currentPoint = new GeoPoint((int)(fromLat * 1E6), (int)(fromLon * 1E6));
+		    pointsPos.setCurrentLocation(currentPoint);
 		    
 		    for(int i = 0; i < mList.results.size(); i++)
 	        {
