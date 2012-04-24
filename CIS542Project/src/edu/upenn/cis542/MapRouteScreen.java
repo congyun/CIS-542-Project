@@ -269,9 +269,12 @@ public class MapRouteScreen extends MapActivity {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.map_route);
                 mapView = (MapView) findViewById(R.id.mapview);
-                red_marker = getResources().getDrawable(R.drawable.marker_a);
-                blue_marker = getResources().getDrawable(R.drawable.marker_c);
-                green_marker = getResources().getDrawable(R.drawable.marker_b);
+                //red_marker = getResources().getDrawable(R.drawable.marker_a);
+                //blue_marker = getResources().getDrawable(R.drawable.marker_c);
+                //green_marker = getResources().getDrawable(R.drawable.marker_b);
+                red_marker = getResources().getDrawable(R.drawable.orange_marker);
+                blue_marker = getResources().getDrawable(R.drawable.blue_marker);
+                green_marker = getResources().getDrawable(R.drawable.green_marker);
                 i_marker = getResources().getDrawable(R.drawable.heart);
                 mapView.setBuiltInZoomControls(true);
                
