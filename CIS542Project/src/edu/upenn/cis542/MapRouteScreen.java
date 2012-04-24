@@ -366,7 +366,7 @@ public class MapRouteScreen extends MapActivity {
                         TextView textView = (TextView) findViewById(R.id.description);
                         textView.setText(mRoad.mName + ", " + mRoad.mDescription);
                         /*draw suggested route info*/
-                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, blue_marker, green_marker, fromLat, fromLon, toLat,toLon, true);
+                        MapOverlay mapOverlay = new MapOverlay(mRoad,mapView, blue_marker, green_marker, fromLat, fromLon, toLat,toLon, 0);
                         List<Overlay> listOfOverlays = mapView.getOverlays();
                         listOfOverlays.clear();
                         Log.v("MapRoute OnCreate", "suggestedRoad size: "+ mRoad.mPoints.length);
@@ -378,7 +378,7 @@ public class MapRouteScreen extends MapActivity {
                         	Log.v("MapRoute OnCreate", "pastRoad size: "+ pastRoad.mPoints.length);
                         	MapOverlay pastRoadOverlay = new MapOverlay(pastRoad,mapView, red_marker, blue_marker, 
                         		pastRoad.mPoints[0].mLatitude,pastRoad.mPoints[0].mLongitude,
-                        		pastRoad.mPoints[pastRoad.mPoints.length-1].mLatitude,pastRoad.mPoints[pastRoad.mPoints.length-1].mLongitude,false);
+                        		pastRoad.mPoints[pastRoad.mPoints.length-1].mLatitude,pastRoad.mPoints[pastRoad.mPoints.length-1].mLongitude,1);
                         	listOfOverlays.add(pastRoadOverlay);
                         }
                         /*draw points of interests*/
