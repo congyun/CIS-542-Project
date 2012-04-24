@@ -253,7 +253,7 @@ public class MapRouteScreen extends MapActivity {
      			Log.v("SearchPlaces in Map", mList.results.get(i).toString());
      		}
      		
-     	// parse mRoad.mDescription to get roadInfoToC
+     		// parse mRoad.mDescription to get roadInfoToC
     		String[] infos = null;
     		if(mRoad.mDescription!=null)
     		{
