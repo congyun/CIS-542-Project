@@ -3,6 +3,7 @@ package edu.upenn.cis542.utilities;
 public class AppConstants {
     public static final String PREFS_NAME = "GPSPrefs";
     
+    public static final double UPDATE_DISTANCE_THRESHOLD = 0.0003;
     public static final int UPDATE_INTERVAL = 5000;
     public static final int UPDATE_INTERVAL_FOR_CONNECTION_LOST = 20000;
     
@@ -54,4 +55,11 @@ public class AppConstants {
     <lat>39.9552910</lat>
     <lng>-75.1989470</lng>
 */
+
+/*  Real testing routes
+    square middle:              toLon = -75.190935          toLat = 39.95213833333333
+    square door near Levine:    toLon = -75.191235          toLat = 39.95221
+    Levine door near 34th St:   toLon = -75.19159166666667  toLat = 39.95214166666667
+
+ */
 }

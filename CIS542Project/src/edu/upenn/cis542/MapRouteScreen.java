@@ -62,7 +62,7 @@ public class MapRouteScreen extends MapActivity {
                 
                 // update pastRoad if it's a new location
                 if ((location.getLongitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLongitude) ||
-                     (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
+                    (location.getLatitude() != pastRoad.mPoints[pastRoad.mPoints.length - 1].mLatitude)) {
                     Log.d("MapRoute, location", "NEW location");
                     Log.d("MapRoute, OLD pastRoad.mPoints.length", Integer.toString(pastRoad.mPoints.length));
                     
@@ -218,12 +218,16 @@ public class MapRouteScreen extends MapActivity {
                     double new_toLon = c.getLongitude();
                     double new_toLat = c.getLatitude();
                     
+                    Log.d("MapRoute, toLon", Double.toString(toLon));
+                    Log.d("MapRoute, toLat", Double.toString(toLat));
                     Log.d("MapRoute, new_toLon", Double.toString(new_toLon));
                     Log.d("MapRoute, new_toLat", Double.toString(new_toLat));
+                    double distanceChange = Math.sqrt((new_toLon-toLon)*(new_toLon-toLon)+(new_toLat-toLat)*(new_toLat-toLat));
+                    Log.d("MapRoute, distanceChange", Double.toString(distanceChange));
                     
                     if ((new_toLat == 0) && (new_toLon == 0)) {
                         Log.d("MapRoute, readRemoteGPSTask", "Invalid destination");
-                    } else if ((new_toLon == toLon) && (new_toLat == toLat)) {
+                    } else if (distanceChange < AppConstants.UPDATE_DISTANCE_THRESHOLD) {
                         Log.d("MapRoute, readRemoteGPSTask", "Unchanged destination");
                     } else {
                         Log.d("MapRoute, readRemoteGPSTask", "Valid destination");
