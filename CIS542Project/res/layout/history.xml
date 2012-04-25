@@ -5,12 +5,63 @@
 	android:layout_height="match_parent"
 	android:weightSum="1">
     
-	<TextView
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_margin="10dp"
-		android:text="This is History Screen" />
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/route1Button"
+                    android:layout_width="55dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Route1"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    android:onClick="onroute1ButtonClick" />
+
+                <Button
+                    android:id="@+id/route2Button"
+                    android:layout_width="55dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Route2"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    android:onClick="onroute2ButtonClick" />
+                
+                <Button
+                    android:id="@+id/route3Button"
+                    android:layout_width="55dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Route3"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    android:onClick="onroute3ButtonClick" />
+                
+                <Button
+                    android:id="@+id/route4Button"
+                    android:layout_width="55dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Route4"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    android:onClick="onroute4ButtonClick" />
+                
+                <Button
+                    android:id="@+id/route5Button"
+                    android:layout_width="55dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Route5"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    android:onClick="onroute5ButtonClick" />
+                
+            </LinearLayout>
+    
 
 	<com.google.android.maps.MapView
         android:id="@+id/historymapview"
@@ -18,7 +69,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:clickable="true"
-        android:apiKey="08qH5iLgyU52sI2f9wexFUgY86qM2ITKmOg8qNQ" 
+        android:apiKey="0lWSI0iRfPAf4GpiXG1mNlH-O6LhA4ITLbY1Ivw" 
         android:progress="15"/>
 	
 	<Button
