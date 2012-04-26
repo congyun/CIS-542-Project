@@ -150,6 +150,11 @@ public class SettingScreen  extends Activity{
         }
 	}
 
+	public void onClearTravelHistoryButtonClick(View view){
+	    DatabaseHelper dbHelper = new DatabaseHelper(this);
+	    dbHelper.deleteAllRecords();
+    }
+	
 	public void onBackToMainButtonClick(View view){
 		finish();
 	}

@@ -61,6 +61,15 @@
         android:prompt="@string/alert_distance_prompt"
     />
     
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom = "10dp"
+        android:text="Clear Travel History"
+        android:onClick="onClearTravelHistoryButtonClick" />
+    
 	<Button
 	    android:layout_width="match_parent"
 	    android:layout_height="40dp"
