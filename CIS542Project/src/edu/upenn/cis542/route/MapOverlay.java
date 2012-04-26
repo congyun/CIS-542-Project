@@ -26,7 +26,7 @@ public class MapOverlay extends com.google.android.maps.Overlay {
     public static int pastRoadColor = Color.DKGRAY;
     public static int suggestedRoadColor = Color.BLUE;
     int m_colorCode;               //color to draw the route
-    int [] colors = {Color.BLUE, Color.RED, Color.CYAN, Color.GREEN, Color.YELLOW, Color.GRAY};
+    int [] colors = {Color.BLUE, Color.RED, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.GRAY};
 
     public MapOverlay(Road road, MapView mv, Drawable s_marker, Drawable d_marker, double fromLat, double fromLon, double toLat, double toLon, int colorCode) {
             mRoad = road;
