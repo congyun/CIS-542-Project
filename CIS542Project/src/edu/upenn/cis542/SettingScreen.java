@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
  
 public class SettingScreen  extends Activity{
@@ -153,6 +154,7 @@ public class SettingScreen  extends Activity{
 	public void onClearTravelHistoryButtonClick(View view){
 	    DatabaseHelper dbHelper = new DatabaseHelper(this);
 	    dbHelper.deleteAllRecords();
+	    Toast.makeText(getApplicationContext(), "Clear All Travel History OK!", Toast.LENGTH_SHORT).show();
     }
 	
 	public void onBackToMainButtonClick(View view){

@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:text="Alert Distance (in miles)" />
+        android:text="Default Alert Distance (in miles)" />
     
     <Spinner
         android:id="@+id/alertDistanceSpinner"
