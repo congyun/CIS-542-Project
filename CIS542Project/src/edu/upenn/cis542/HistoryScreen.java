@@ -77,6 +77,7 @@ public class HistoryScreen extends MapActivity {
 
 		// if list not empty ?need to determine?
 		int roadNum = historyRoadList.size();
+        Log.d("HistoryScreen, roadNum", Integer.toString(roadNum));
 		_options = new CharSequence[roadNum];
 		for (int i = 0; i < historyRoadList.size(); i++) {
 			Road road = (Road) historyRoadList.get(i);
@@ -135,7 +136,16 @@ public class HistoryScreen extends MapActivity {
 						selectedRouteCount++;
 					}
 				}
-				if (selectedRouteCount > 5) {
+				if (selectedRouteCount == 0){
+				    if (historyRoadList.size() != 0) {
+    				    Context context = getApplicationContext();
+                        Toast.makeText(context,
+                                "Please select a routes to display!",
+                                Toast.LENGTH_LONG).show();
+				    }
+                    // exit history screen
+                    finish();
+				} else if (selectedRouteCount > 5) {
 					Context context = getApplicationContext();
 					Toast.makeText(context,
 							"Please select no more than 5 routes to display!",
