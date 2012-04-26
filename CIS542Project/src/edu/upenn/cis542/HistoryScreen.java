@@ -41,7 +41,7 @@ public class HistoryScreen extends MapActivity {
 	private Drawable s_marker;
 	private Drawable d_marker;
 	List<Overlay> listOfOverlays;
-	int colors[] = {Color.BLUE, Color.RED, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.GRAY};
+	int colors[] = {Color.BLUE, Color.GRAY, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.RED};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
