@@ -211,7 +211,7 @@ public class HistoryScreen extends MapActivity {
 		for (int i = 0; i < _options.length; i++) {
 
 			if (_selections[i] == true) {
-				dbHelper.deleteRecord(i);
+				dbHelper.deleteRecord(i+1);
 			}
 			Log.d("debug", "road deleted from DB.");//
 		}
