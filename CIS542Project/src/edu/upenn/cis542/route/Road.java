@@ -15,4 +15,5 @@ public class Road implements Serializable {
     public long mEndTime = 0;   // get by System.currentTimeMillis();
     public String mStartName;
     public String mEndName;
+    public String mId;
 }

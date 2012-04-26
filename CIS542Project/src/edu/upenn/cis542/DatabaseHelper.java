@@ -103,12 +103,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	// Deleting single record
-	public void deleteRecord(int id) {
+	public void deleteRecord(String id) {
 	    SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(ROAD_TABLE_NAME, KEY_ID + " = ?",
-	            new String[] { String.valueOf(id) });
+	            new String[] { id });
 	    db.close();
-	    Log.d("DatabaseHepler, deleteRecord", "id = " + Integer.toString(id));
+	    Log.d("DatabaseHepler, deleteRecord", "id = " + id);
 	}
 	
 	

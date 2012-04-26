@@ -60,6 +60,7 @@ public class HistoryScreen extends MapActivity {
 		if (cursor.moveToFirst()) {
 			do {
 				Road newRoad = new Road();
+				newRoad.mId = cursor.getString(0);
 				newRoad.mStartTime = Long.parseLong(cursor.getString(1));
 				newRoad.mEndTime = Long.parseLong(cursor.getString(2));
 				newRoad.mStartName = cursor.getString(3);
@@ -67,7 +68,7 @@ public class HistoryScreen extends MapActivity {
 				String pointsInfo = cursor.getString(5);
 				newRoad.mPoints = parsePoint(pointsInfo);
 				historyRoadList.add(newRoad);
-				Log.d("HistoryScreen, added a road", "id="+cursor.getString(0)+", "+newRoad.mStartTime+", "+newRoad.mEndTime+", "+newRoad.mStartName+", "+newRoad.mEndName+": "+pointsInfo);//
+				Log.d("HistoryScreen, added a road", "id="+newRoad.mId+", "+newRoad.mStartTime+", "+newRoad.mEndTime+", "+newRoad.mStartName+", "+newRoad.mEndName+": "+pointsInfo);//
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
@@ -118,7 +119,7 @@ public class HistoryScreen extends MapActivity {
 
 		public void onClick(DialogInterface dialog, int clicked,
 				boolean selected) {
-			Log.i("MEooooo", _options[clicked] + " selected: " + selected);
+			Log.i("DialogSelectionClickHandler", _options[clicked] + " selected: " + selected);
 
 		}
 	}
@@ -139,11 +140,16 @@ public class HistoryScreen extends MapActivity {
 					Toast.makeText(context,
 							"Please select no more than 5 routes to display!",
 							Toast.LENGTH_LONG).show();
-				} else
-					printSelectedRoads();
+					// exit history screen
+					finish();
+				} else {
+				    printSelectedRoads();
+				}
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
 				deleteSelectedRoads();
+				// exit history screen
+				finish();
 				break;
 			}
 		}
@@ -208,14 +214,13 @@ public class HistoryScreen extends MapActivity {
 	}
 
 	protected void deleteSelectedRoads() {
-
 		DatabaseHelper dbHelper = new DatabaseHelper(this);
 		for (int i = 0; i < _options.length; i++) {
-
 			if (_selections[i] == true) {
-				dbHelper.deleteRecord(i+1);
+			    String selectRoadId = historyRoadList.get(i).mId;
+				dbHelper.deleteRecord(selectRoadId);
+	            Log.d("HistoryScreen, deleteded a road", "id="+selectRoadId);
 			}
-			Log.d("debug", "road deleted from DB.");//
 		}
 		dbHelper.close();
 	}
