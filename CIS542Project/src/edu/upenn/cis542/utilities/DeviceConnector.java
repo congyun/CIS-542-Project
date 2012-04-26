@@ -6,7 +6,7 @@ import java.net.*;
 import android.util.Log;
 
 public class DeviceConnector {    
-    private String serverAddr = "158.130.103.51";
+    private String serverAddr = "158.130.102.204";
     private int serverPort = 19109;
     private int timeOut = 3000; // socket timeout in milliseconds
     public long latitude = 0;
