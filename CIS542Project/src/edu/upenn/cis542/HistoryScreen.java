@@ -67,11 +67,11 @@ public class HistoryScreen extends MapActivity {
 				String pointsInfo = cursor.getString(5);
 				newRoad.mPoints = parsePoint(pointsInfo);
 				historyRoadList.add(newRoad);
-				Log.d("debug", "added a road.");//
+				Log.d("HistoryScreen, added a road", newRoad.mStartTime+", "+newRoad.mEndTime+", "+newRoad.mStartName+", "+newRoad.mEndName+": "+pointsInfo);//
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
-		Log.d("cursor:", String.valueOf(cursor.isClosed()));
+		Log.d("HistoryScreen, cursor.isClosed()", String.valueOf(cursor.isClosed()));
 		dbHelper.close();
 
 		// if list not empty ?need to determine?
@@ -165,6 +165,8 @@ public class HistoryScreen extends MapActivity {
 			buttonId = R.id.route4Button;
 			break;
 		case 5:
+		    buttonId = R.id.route5Button;
+            break;
 		default:
 			buttonId = R.id.route5Button;
 			break;

@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cv.put(KEY_POINT, pointInfo);
 		db.insert(ROAD_TABLE_NAME, null, cv); // Inserting Row
 		db.close(); // Closing database connection
-		Log.d("DatabaseHepler, insertRecord", startTime + " " + endTime + " " + startName + " " + endName + ": "+ pointInfo);
+		Log.d("DatabaseHepler, insertRecord", startTime + ", " + endTime + ", " + startName + ", " + endName + ": "+ pointInfo);
 	}
 
 	// Get single record

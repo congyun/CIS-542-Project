@@ -332,7 +332,7 @@ public class MainMenuScreen  extends Activity{
 					// store it to a new entry in table
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
 
-					Log.d("Insert: ", "Inserting ..");
+					Log.d("Insert: ", "Inserting Start");
 					String pointInfo = "";
 					for (int i = 0; i < pastRoad.mPoints.length; i++) {
 						pointInfo += pastRoad.mPoints[i].mLatitude;
@@ -346,7 +346,7 @@ public class MainMenuScreen  extends Activity{
 					if (pastRoad.mEndName == "")
 						pastRoad.mEndName = "Unknown Place";
 					dbHelper.insertRecord(String.valueOf(pastRoad.mStartTime),String.valueOf(pastRoad.mEndTime),pastRoad.mStartName, pastRoad.mEndName, pointInfo);
-					Log.d("Insert: ", "Record Inserted." + pointInfo);
+					Log.d("Insert: ", "Inserting Finish");
 				}
 
 				finish();
