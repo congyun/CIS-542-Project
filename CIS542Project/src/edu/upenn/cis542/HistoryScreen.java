@@ -67,7 +67,7 @@ public class HistoryScreen extends MapActivity {
 				String pointsInfo = cursor.getString(5);
 				newRoad.mPoints = parsePoint(pointsInfo);
 				historyRoadList.add(newRoad);
-				Log.d("HistoryScreen, added a road", newRoad.mStartTime+", "+newRoad.mEndTime+", "+newRoad.mStartName+", "+newRoad.mEndName+": "+pointsInfo);//
+				Log.d("HistoryScreen, added a road", "id="+cursor.getString(0)+", "+newRoad.mStartTime+", "+newRoad.mEndTime+", "+newRoad.mStartName+", "+newRoad.mEndName+": "+pointsInfo);//
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
